@@ -6,4 +6,3 @@ Bosch_dryer, 0.1, 738.6
 Google_nest, 0.0, 15
 Google_mesh, 0.0, 15
 Oven, 0.0, 0.0
-12345678
