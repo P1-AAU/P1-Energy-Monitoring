@@ -1,0 +1,9 @@
+Phillips_Hue, 0.5, 6.5
+Phillips_tv, 2.0, 90
+Bosch_dishwasher, 2.0, 246.13
+Miele_washingmachine, 0.8, 148.64
+Bosch_dryer, 0.1, 738.6
+Google_nest, 0.0, 15
+Google_mesh, 0.0, 15
+Oven, 0.0, 0.0
+12345678
