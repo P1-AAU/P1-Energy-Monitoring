@@ -15,3 +15,6 @@ find_package(CURL REQUIRED)
 
 include_directories(${CURL_INCLUDE_DIR})
 target_link_libraries(P1-Energy-Monitoring ${CURL_LIBRARIES})
+
+find_package(json-c CONFIG)
+target_link_libraries(P1-Energy-Monitoring json-c::json-c)

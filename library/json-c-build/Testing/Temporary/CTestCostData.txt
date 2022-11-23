@@ -1,0 +1,25 @@
+test1 1 0.71054
+test2 1 0.586614
+test4 1 0.358522
+testReplaceExisting 1 0.208261
+test_cast 1 0.200071
+test_charcase 1 0.201048
+test_compare 1 0.200256
+test_deep_copy 1 0.200598
+test_double_serializer 1 0.198046
+test_float 1 0.199376
+test_int_add 1 0.256715
+test_int_get 1 0.20157
+test_locale 1 0.199937
+test_null 1 0.199226
+test_parse 1 0.201589
+test_parse_int64 1 0.198336
+test_printbuf 1 0.198404
+test_set_serializer 1 0.199106
+test_set_value 1 0.200031
+test_strerror 1 0.199956
+test_util_file 1 0.20168
+test_visit 1 0.198711
+test_object_iterator 1 0.198667
+test_json_pointer 1 0.202567
+---

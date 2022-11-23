@@ -1,0 +1,248 @@
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: /Library/Developer/CommandLineTools/usr/bin/cc 
+Build flags: 
+Id flags:  
+
+The output was:
+1
+ld: library not found for -lSystem
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+
+
+Determining if the include file endian.h exists failed with the following output:
+Change Dir: /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_10ba7/fast && /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_10ba7.dir/build.make CMakeFiles/cmTC_10ba7.dir/build
+Building C object CMakeFiles/cmTC_10ba7.dir/CheckIncludeFile.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc -D_GNU_SOURCE  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.0.sdk -fPIE -MD -MT CMakeFiles/cmTC_10ba7.dir/CheckIncludeFile.c.o -MF CMakeFiles/cmTC_10ba7.dir/CheckIncludeFile.c.o.d -o CMakeFiles/cmTC_10ba7.dir/CheckIncludeFile.c.o -c /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+/Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/CheckIncludeFile.c:1:10: fatal error: 'endian.h' file not found
+#include <endian.h>
+         ^~~~~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_10ba7.dir/CheckIncludeFile.c.o] Error 1
+make: *** [cmTC_10ba7/fast] Error 2
+
+
+
+Determining if the _isnan exist failed with the following output:
+Change Dir: /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_d4951/fast && /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_d4951.dir/build.make CMakeFiles/cmTC_d4951.dir/build
+Building C object CMakeFiles/cmTC_d4951.dir/CheckSymbolExists.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc -D_GNU_SOURCE  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.0.sdk -fPIE -MD -MT CMakeFiles/cmTC_d4951.dir/CheckSymbolExists.c.o -MF CMakeFiles/cmTC_d4951.dir/CheckSymbolExists.c.o.d -o CMakeFiles/cmTC_d4951.dir/CheckSymbolExists.c.o -c /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+/Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:8:19: error: use of undeclared identifier '_isnan'
+  return ((int*)(&_isnan))[argc];
+                  ^
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_d4951.dir/CheckSymbolExists.c.o] Error 1
+make: *** [cmTC_d4951/fast] Error 2
+
+
+File /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <float.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef _isnan
+  return ((int*)(&_isnan))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the _finite exist failed with the following output:
+Change Dir: /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_b5b54/fast && /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_b5b54.dir/build.make CMakeFiles/cmTC_b5b54.dir/build
+Building C object CMakeFiles/cmTC_b5b54.dir/CheckSymbolExists.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc -D_GNU_SOURCE  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.0.sdk -fPIE -MD -MT CMakeFiles/cmTC_b5b54.dir/CheckSymbolExists.c.o -MF CMakeFiles/cmTC_b5b54.dir/CheckSymbolExists.c.o.d -o CMakeFiles/cmTC_b5b54.dir/CheckSymbolExists.c.o -c /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+/Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:8:19: error: use of undeclared identifier '_finite'
+  return ((int*)(&_finite))[argc];
+                  ^
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_b5b54.dir/CheckSymbolExists.c.o] Error 1
+make: *** [cmTC_b5b54/fast] Error 2
+
+
+File /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <float.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef _finite
+  return ((int*)(&_finite))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the _doprnt exist failed with the following output:
+Change Dir: /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_f2ad7/fast && /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_f2ad7.dir/build.make CMakeFiles/cmTC_f2ad7.dir/build
+Building C object CMakeFiles/cmTC_f2ad7.dir/CheckSymbolExists.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc -D_GNU_SOURCE  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.0.sdk -fPIE -MD -MT CMakeFiles/cmTC_f2ad7.dir/CheckSymbolExists.c.o -MF CMakeFiles/cmTC_f2ad7.dir/CheckSymbolExists.c.o.d -o CMakeFiles/cmTC_f2ad7.dir/CheckSymbolExists.c.o -c /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+/Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:8:19: error: use of undeclared identifier '_doprnt'; did you mean 'fdopen'?
+  return ((int*)(&_doprnt))[argc];
+                  ^~~~~~~
+                  fdopen
+/Library/Developer/CommandLineTools/SDKs/MacOSX13.0.sdk/usr/include/stdio.h:227:7: note: 'fdopen' declared here
+FILE    *fdopen(int, const char *) __DARWIN_ALIAS_STARTING(__MAC_10_6, __IPHONE_2_0, __DARWIN_ALIAS(fdopen));
+         ^
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_f2ad7.dir/CheckSymbolExists.c.o] Error 1
+make: *** [cmTC_f2ad7/fast] Error 2
+
+
+File /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <stdio.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef _doprnt
+  return ((int*)(&_doprnt))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the uselocale exist failed with the following output:
+Change Dir: /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_5f87f/fast && /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_5f87f.dir/build.make CMakeFiles/cmTC_5f87f.dir/build
+Building C object CMakeFiles/cmTC_5f87f.dir/CheckSymbolExists.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc -D_GNU_SOURCE  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.0.sdk -fPIE -MD -MT CMakeFiles/cmTC_5f87f.dir/CheckSymbolExists.c.o -MF CMakeFiles/cmTC_5f87f.dir/CheckSymbolExists.c.o.d -o CMakeFiles/cmTC_5f87f.dir/CheckSymbolExists.c.o -c /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+/Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:8:19: error: use of undeclared identifier 'uselocale'; did you mean 'setlocale'?
+  return ((int*)(&uselocale))[argc];
+                  ^~~~~~~~~
+                  setlocale
+/Library/Developer/CommandLineTools/SDKs/MacOSX13.0.sdk/usr/include/locale.h:53:8: note: 'setlocale' declared here
+char            *setlocale(int, const char *);
+                 ^
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_5f87f.dir/CheckSymbolExists.c.o] Error 1
+make: *** [cmTC_5f87f/fast] Error 2
+
+
+File /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <locale.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef uselocale
+  return ((int*)(&uselocale))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Determining if the getrandom exist failed with the following output:
+Change Dir: /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_f1b68/fast && /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_f1b68.dir/build.make CMakeFiles/cmTC_f1b68.dir/build
+Building C object CMakeFiles/cmTC_f1b68.dir/CheckSymbolExists.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc -D_GNU_SOURCE  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.0.sdk -fPIE -MD -MT CMakeFiles/cmTC_f1b68.dir/CheckSymbolExists.c.o -MF CMakeFiles/cmTC_f1b68.dir/CheckSymbolExists.c.o.d -o CMakeFiles/cmTC_f1b68.dir/CheckSymbolExists.c.o -c /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+/Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:8:19: error: use of undeclared identifier 'getrandom'
+  return ((int*)(&getrandom))[argc];
+                  ^
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_f1b68.dir/CheckSymbolExists.c.o] Error 1
+make: *** [cmTC_f1b68/fast] Error 2
+
+
+File /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <sys/random.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef getrandom
+  return ((int*)(&getrandom))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+Performing C SOURCE FILE Test HAS_GNU_WARNING_LONG failed with the following output:
+Change Dir: /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_062e2/fast && /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_062e2.dir/build.make CMakeFiles/cmTC_062e2.dir/build
+Building C object CMakeFiles/cmTC_062e2.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc -DHAS_GNU_WARNING_LONG -D_GNU_SOURCE  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.0.sdk -fPIE -MD -MT CMakeFiles/cmTC_062e2.dir/src.c.o -MF CMakeFiles/cmTC_062e2.dir/src.c.o.d -o CMakeFiles/cmTC_062e2.dir/src.c.o -c /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/src.c
+/Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/src.c:3:9: warning: missing terminating '"' character [-Winvalid-pp-token]
+__asm__(".section .gnu.json_object_get
+        ^
+/Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/src.c:3:9: error: expected string literal in 'asm'
+/Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/src.c:5:7: warning: missing terminating '"' character [-Winvalid-pp-token]
+        .text");
+             ^
+/Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/src.c:6:38: error: expected ';' after top-level asm block
+int main(int c, char *v) { return 0;}
+                                     ^
+                                     ;
+2 warnings and 2 errors generated.
+make[1]: *** [CMakeFiles/cmTC_062e2.dir/src.c.o] Error 1
+make: *** [cmTC_062e2/fast] Error 2
+
+
+Source file was:
+
+extern void json_object_get();
+__asm__(".section .gnu.json_object_get
+	.ascii "Please link against libjson-c instead of libjson"
+	.text");
+int main(int c, char *v) { return 0;}
+
+Performing C SOURCE FILE Test BSYMBOLIC_WORKS failed with the following output:
+Change Dir: /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_1cd8a/fast && /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_1cd8a.dir/build.make CMakeFiles/cmTC_1cd8a.dir/build
+Building C object CMakeFiles/cmTC_1cd8a.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc -DBSYMBOLIC_WORKS -D_GNU_SOURCE  -ffunction-sections -fdata-sections -Werror -Wall -Wcast-qual -Wno-error=deprecated-declarations -Wextra -Wwrite-strings -Wno-unused-parameter -Wstrict-prototypes  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.0.sdk -fPIE -MD -MT CMakeFiles/cmTC_1cd8a.dir/src.c.o -MF CMakeFiles/cmTC_1cd8a.dir/src.c.o.d -o CMakeFiles/cmTC_1cd8a.dir/src.c.o -c /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_1cd8a
+/Applications/CMake.app/Contents/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1cd8a.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc  -ffunction-sections -fdata-sections -Werror -Wall -Wcast-qual -Wno-error=deprecated-declarations -Wextra -Wwrite-strings -Wno-unused-parameter -Wstrict-prototypes  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.0.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_1cd8a.dir/src.c.o -o cmTC_1cd8a  -lm -Wl,-Bsymbolic-functions 
+ld: unknown option: -Bsymbolic-functions
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+make[1]: *** [cmTC_1cd8a] Error 1
+make: *** [cmTC_1cd8a/fast] Error 2
+
+
+Source file was:
+
+	int main (void)
+	{
+	  return 0;
+	}
+	
+Performing C SOURCE FILE Test VERSION_SCRIPT_WORKS failed with the following output:
+Change Dir: /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_07858/fast && /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_07858.dir/build.make CMakeFiles/cmTC_07858.dir/build
+Building C object CMakeFiles/cmTC_07858.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc -DVERSION_SCRIPT_WORKS -D_GNU_SOURCE  -ffunction-sections -fdata-sections -Werror -Wall -Wcast-qual -Wno-error=deprecated-declarations -Wextra -Wwrite-strings -Wno-unused-parameter -Wstrict-prototypes  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.0.sdk -fPIE -MD -MT CMakeFiles/cmTC_07858.dir/src.c.o -MF CMakeFiles/cmTC_07858.dir/src.c.o.d -o CMakeFiles/cmTC_07858.dir/src.c.o -c /Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_07858
+/Applications/CMake.app/Contents/bin/cmake -E cmake_link_script CMakeFiles/cmTC_07858.dir/link.txt --verbose=1
+/Library/Developer/CommandLineTools/usr/bin/cc  -ffunction-sections -fdata-sections -Werror -Wall -Wcast-qual -Wno-error=deprecated-declarations -Wextra -Wwrite-strings -Wno-unused-parameter -Wstrict-prototypes  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.0.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_07858.dir/src.c.o -o cmTC_07858  -lm -Wl,--version-script,/Users/andreasjackchristiansen/Desktop/UNI/P1/P1-Energy-Monitoring/library/json-c-build/check-version-script.sym 
+ld: unknown option: --version-script
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+make[1]: *** [cmTC_07858] Error 1
+make: *** [cmTC_07858/fast] Error 2
+
+
+Source file was:
+
+	int main (void)
+	{
+	  return 0;
+	}
+	
