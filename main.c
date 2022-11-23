@@ -82,8 +82,9 @@ void print_devices(device *devices)
 void save_api_result(char *ptr, size_t size, size_t nmemb, void *stream)
 {
     FILE *file;
-    file = fopen("../output.json", "w+");
+    file = fopen("../output.json", "r+");
     //printf("Kig her: \n%s\n", ptr);
+    //fwrite()
     fprintf(stderr, "Kig her: %s", ptr);
     fclose(file);
 }
