@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <curl/curl.h>
 #include <json-c/json_object.h>
+#include <json-c/json_tokener.h>
 
 #define MAX_LENGTH 30
 
@@ -20,20 +21,30 @@ typedef struct
 // prototypes
 void fill_device(FILE *source, device *devices);
 void print_devices(device *devices);
-void get_api(char answer);
+void get_api_fees(char answer);
+void get_api_spot_prices();
 
 int main()
 {
     FILE source;
     device *devices;
     char answer;
+    char answer1;
 
     devices = malloc(8 * sizeof(device));
 
     printf("Do you want a new access token? y/n: ");
     scanf("%c", &answer);
 
-    get_api(answer);
+    get_api_fees(answer);
+
+    printf("Do you want spot prices? y/n: ");
+    scanf(" %c", &answer1);
+
+    if (answer1 == 'y')
+    {
+        get_api_spot_prices();
+    }
 
     /* fill_device(&source, devices);
     print_devices(devices); */
@@ -89,7 +100,7 @@ size_t save_api_result(char *ptr, size_t size, size_t nmemb, void *not_used)
     return size * nmemb;
 }
 
-void get_api(char answer)
+void get_api_fees(char answer)
 {
     CURL *curl;
     CURLcode res;
@@ -131,16 +142,27 @@ void get_api(char answer)
     }
     else
     {
+
+        // Here we get the access token from the json file
         access_token_file = fopen("accessToken.json", "r");
         fread(buffer, 5000, 1, access_token_file);
         fclose(access_token_file);
 
-        parsed_json = json_object_new_string(buffer);
+        parsed_json = json_tokener_parse(buffer);
         json_object_object_get_ex(parsed_json, "result", &access_token);
 
-        printf("%s", json_object_to_json_string_ext(access_token, JSON_C_TO_STRING_PRETTY));
+        const char *access_token_string = json_object_get_string(access_token);
 
-        headers = curl_slist_append(headers, "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlblR5cGUiOiJDdXN0b21lckFQSV9EYXRhQWNjZXNzIiwidG9rZW5pZCI6IjdhMjIxYTFjLWYwMTYtNDc0NC1hYzE5LTk0M2Q5ZjFhM2E2ZCIsIndlYkFwcCI6WyJDdXN0b21lckFwaSIsIkN1c3RvbWVyQXBpIiwiQ3VzdG9tZXJBcHBBcGkiXSwidmVyc2lvbiI6IjIiLCJpZGVudGl0eVRva2VuIjoiK2QzTk95RTAwUTlhejBnSzF3dVZWVGJMUkFpYXZ5OHR4bWZIWGZaNjM3d3kvdEZUak5PMUdNa2I0UHl1dkM1RUhBTitYODNseHpNN0IrZHZqOUtURitWMDd4ZzVTU1dzL012dVdCVGdyN3BrZ0paNllsVnJ5TlpONXhRMjZMVmxvSzZramlRS1YyVmZxMjMrVkpoZDJiYkJ1SjdvTjAyaTN3OTBtUndOWFByNHJzd3lTdFBkSjRNNXJqN2hiZlE0M28yeDFjeEt4dGtIM1hZSzhObElLNHYyVjJ6QzNXbHBDTEIyS0pHOXVUN0IrVEpDMSs4MHVTNWNXVGVXQ2tTcnM1Nkx6bU9URFpmeEo3OEZ1VnAzbG9hb3VuQWNZU2FxazBvaE9XTnJ5aG05NFZKVzJsM0U5YnRHMFlyQ1VOSTdzOXVrNDRxcjBRK3ZBMVBwR3NHNWNpOE85L1hIYVNxWnNpZjk5dUUwdHhldWlmTzJvVkFrQWZwcldVRWRJVENYd24xS29NTHAwdWhBdThOc3ljeFY4YkdieHFCYkhpL016S01zMnZzalRNbXEva094b1VOSEppQzVGSUhQWEVzZWNyRkxZZU85QVVKeVFTTWFlUjBOa0JGdVIrN0RpMTlJd0cwTXRhVUR1RTROYTRpVHpnelJpWWhRTnUwWHJvL3VwYW5rSURXRWxQSGdYVG1ZZnVUcmwzQUVwdkhiam1CK1VOQ1d2L0JLaDNNNGtDbmd3UC9mWk1Cam5tRUZ1TC9TV3Q4MzlXQ0RWWVk2UHJYT3NkaTVtSzZNdGNmeVJSa1BTbmhpOTVLdyt5WCtZZ3VGNUxqcUxDTm1Uc2pHa2tDaWtQWlBRVXdZdEZCSEU2NkJYc0UwODQrRVZ1cExSdzlhQ2I3QXZhUWQvd1ludEVnOGhzK1dWZUc4aVkrWnNIWlpUVm91Tk54RlhmOCtQcWtieUpCNVdsanBHU0UvcjVwNit3N1ZmTE5uY0kxTHg3RUxhamxvWnIvWC9iLzdHcE9ZZi9mVlNHbFdRbUJSVVFuZitZSmdEblErSm9oVkk3OENOTTE5VDFIWEk2eG9aUGVVNzNMMEYyTXN4YUZhczFFM1ZUS1hnU3AwRHNsTzRtQlkwd2IrRk14QXBIUWtSOEJWbUhDUytKcXNnRjE2S0lWYVk0M29rU0FlRmlpN2Jydk14ZWUvVXhoK2VtM3NDOFpuajNLaVFHMEVJMGxjcUkrS3RGR2RFdXVIOU5wRTAzMG5BdlQxNTJYNVhIbEhQQmg2VkQwV29WZzd3ZXJnMjJKa3VCZ045UXUyRUFWQk14YThpMTVaQUNzaXVQS05jdTl6RTRTOWJsNG5WZjNzcFZkd2ViaGlBVnB5Qkp1bGMxcnNHWUgxMHdlNTVBYUl6Y3UydWhTSS9yMkVtZXQ0MmpkSTQxMC9WTGNtY08rZ2U3MVl1eTVHaUhRQXlnR1ZWQVFQekR0VzJCc0thOElJaE9UZ01NZFY2OXQxVkdtZmNHbnZNY1IwZ1RvUkRKdWtrUHRvbmJpSFMxaTk3QmZFTXNxN2VIYjN6SUZCaDlCbDMwNmIvU2xYTjVwTnVSTWxnd25EM1prZUFTMElzVXBCTGp1Qkl2RDRWb2xIRTN2WHQxVVJKcXRES05XakpaWENBc2xJS3NOckJmQVBIVlpzaFNwZU8vRDFrZzVHVFhjVHdBaUc1SGc2M1h5RHZLVDZqNnVnMzlUYTAzL0xJVGlIRWt0eXFSSmhmYzVGZHdodmErU3dwN3MwTTJrbjYvQy9Zd1FrdW5vWCs3V09yeFN5MHkwV1lEeUZ6U25lOUNOemRsRmQxTkRUUHdnUU1DY2RSUjJnWHV2TnQ5cG1kOWNKUUI5cGFVRDJjL2xPbmF6Vmg1Tmg2ZkllZ3FjL0MrMW50aXVSbURQaTh5NmloRzFyNTVQNFU3Vlp1cWdJRnVGc05uM2J4THJuVzVwVVUzRk9KdzZkNjVTQWJVWk11NGxlUGgxdVoycWRUNXgxeFU1RWNMMlVHMUtEa09nNFI4YVc2TFJzWGs3NnRVU0tPOWtiTU1zZkt6SVI0dGl3azhrMjhtTnViVDdRMHhkV3luNks4Zldjd3RDVFEzOTJaeEZnd2xVZ0JRODVKVEkyN1J3R2tIeENhN1lQYWRscHZtenozZUE1VkZHMXdYRFJDbERhZG1vRlBZTlhoc3E1WVVxUUIzNTZFMXJQUHdzYlZEZCtCWEJXbi9PL042dU9rUk1rQnVvaytvSGp6cFZmaXVTSzd3RjBZY3dZUXg4bG9renZmbVM0Znp3RS90MFdjeTdzOHljZlRqQkJxN09WNDNpajlVaDgrNXV6anJob0JtWXkranFySElnYUZiVTloU2lSNEErZ1ZyWlYwSW5WdzAvUy9HUWo4aTdHd3krWE1CUW1IY04xNm1ZQnNTNG9MZzBQRVZ0MVNSY2VYNWlMbmpIb0h6aWQ4YnVZa21rV29GWVZuc3RGNERkS082N1Z2TXhPV0tkZGZiMys0RGpqdE9VQXUzUGFURjl6N1NObVNZRnNIREQ2IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiJQSUQ6OTIwOC0yMDAyLTItODg3OTI1MTkwNzAxIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZ2l2ZW5uYW1lIjoiQW5kcmVhcyBKYWNrIENocmlzdGlhbnNlbiIsImxvZ2luVHlwZSI6IktleUNhcmQiLCJwaWQiOiI5MjA4LTIwMDItMi04ODc5MjUxOTA3MDEiLCJiM2YiOiJLYldpZll2Mms0MlNzK2RrcXVuS1o1eGxWQVBCM09rQ21Uc3N3MVdWQ2VjPSIsInVzZXJJZCI6IjI0MTA4MyIsImV4cCI6MTY2OTM2NzEzNSwiaXNzIjoiRW5lcmdpbmV0IiwianRpIjoiN2EyMjFhMWMtZjAxNi00NzQ0LWFjMTktOTQzZDlmMWEzYTZkIiwidG9rZW5OYW1lIjoicDEiLCJhdWQiOiJFbmVyZ2luZXQifQ.VzQLHfJPvdzrMpdcb2CixXHYYrKBI4qvttfjShQnJOE");
+        char buf[json_object_get_string_len(access_token)];
+
+        strcpy(buf, access_token_string);
+
+        char header_string[json_object_get_string_len(access_token) + 23];
+        strcpy(header_string, "Authorization: Bearer ");
+
+        strcat(header_string, buf);
+
+        headers = curl_slist_append(headers, header_string);
 
         curl = curl_easy_init();
         if (curl)
@@ -160,7 +182,26 @@ void get_api(char answer)
         }
     }
 
-    headers = curl_slist_append(headers, "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlblR5cGUiOiJDdXN0b21lckFQSV9EYXRhQWNjZXNzIiwidG9rZW5pZCI6IjdhMjIxYTFjLWYwMTYtNDc0NC1hYzE5LTk0M2Q5ZjFhM2E2ZCIsIndlYkFwcCI6WyJDdXN0b21lckFwaSIsIkN1c3RvbWVyQXBpIiwiQ3VzdG9tZXJBcHBBcGkiXSwidmVyc2lvbiI6IjIiLCJpZGVudGl0eVRva2VuIjoiK2QzTk95RTAwUTlhejBnSzF3dVZWVGJMUkFpYXZ5OHR4bWZIWGZaNjM3d3kvdEZUak5PMUdNa2I0UHl1dkM1RUhBTitYODNseHpNN0IrZHZqOUtURitWMDd4ZzVTU1dzL012dVdCVGdyN3BrZ0paNllsVnJ5TlpONXhRMjZMVmxvSzZramlRS1YyVmZxMjMrVkpoZDJiYkJ1SjdvTjAyaTN3OTBtUndOWFByNHJzd3lTdFBkSjRNNXJqN2hiZlE0M28yeDFjeEt4dGtIM1hZSzhObElLNHYyVjJ6QzNXbHBDTEIyS0pHOXVUN0IrVEpDMSs4MHVTNWNXVGVXQ2tTcnM1Nkx6bU9URFpmeEo3OEZ1VnAzbG9hb3VuQWNZU2FxazBvaE9XTnJ5aG05NFZKVzJsM0U5YnRHMFlyQ1VOSTdzOXVrNDRxcjBRK3ZBMVBwR3NHNWNpOE85L1hIYVNxWnNpZjk5dUUwdHhldWlmTzJvVkFrQWZwcldVRWRJVENYd24xS29NTHAwdWhBdThOc3ljeFY4YkdieHFCYkhpL016S01zMnZzalRNbXEva094b1VOSEppQzVGSUhQWEVzZWNyRkxZZU85QVVKeVFTTWFlUjBOa0JGdVIrN0RpMTlJd0cwTXRhVUR1RTROYTRpVHpnelJpWWhRTnUwWHJvL3VwYW5rSURXRWxQSGdYVG1ZZnVUcmwzQUVwdkhiam1CK1VOQ1d2L0JLaDNNNGtDbmd3UC9mWk1Cam5tRUZ1TC9TV3Q4MzlXQ0RWWVk2UHJYT3NkaTVtSzZNdGNmeVJSa1BTbmhpOTVLdyt5WCtZZ3VGNUxqcUxDTm1Uc2pHa2tDaWtQWlBRVXdZdEZCSEU2NkJYc0UwODQrRVZ1cExSdzlhQ2I3QXZhUWQvd1ludEVnOGhzK1dWZUc4aVkrWnNIWlpUVm91Tk54RlhmOCtQcWtieUpCNVdsanBHU0UvcjVwNit3N1ZmTE5uY0kxTHg3RUxhamxvWnIvWC9iLzdHcE9ZZi9mVlNHbFdRbUJSVVFuZitZSmdEblErSm9oVkk3OENOTTE5VDFIWEk2eG9aUGVVNzNMMEYyTXN4YUZhczFFM1ZUS1hnU3AwRHNsTzRtQlkwd2IrRk14QXBIUWtSOEJWbUhDUytKcXNnRjE2S0lWYVk0M29rU0FlRmlpN2Jydk14ZWUvVXhoK2VtM3NDOFpuajNLaVFHMEVJMGxjcUkrS3RGR2RFdXVIOU5wRTAzMG5BdlQxNTJYNVhIbEhQQmg2VkQwV29WZzd3ZXJnMjJKa3VCZ045UXUyRUFWQk14YThpMTVaQUNzaXVQS05jdTl6RTRTOWJsNG5WZjNzcFZkd2ViaGlBVnB5Qkp1bGMxcnNHWUgxMHdlNTVBYUl6Y3UydWhTSS9yMkVtZXQ0MmpkSTQxMC9WTGNtY08rZ2U3MVl1eTVHaUhRQXlnR1ZWQVFQekR0VzJCc0thOElJaE9UZ01NZFY2OXQxVkdtZmNHbnZNY1IwZ1RvUkRKdWtrUHRvbmJpSFMxaTk3QmZFTXNxN2VIYjN6SUZCaDlCbDMwNmIvU2xYTjVwTnVSTWxnd25EM1prZUFTMElzVXBCTGp1Qkl2RDRWb2xIRTN2WHQxVVJKcXRES05XakpaWENBc2xJS3NOckJmQVBIVlpzaFNwZU8vRDFrZzVHVFhjVHdBaUc1SGc2M1h5RHZLVDZqNnVnMzlUYTAzL0xJVGlIRWt0eXFSSmhmYzVGZHdodmErU3dwN3MwTTJrbjYvQy9Zd1FrdW5vWCs3V09yeFN5MHkwV1lEeUZ6U25lOUNOemRsRmQxTkRUUHdnUU1DY2RSUjJnWHV2TnQ5cG1kOWNKUUI5cGFVRDJjL2xPbmF6Vmg1Tmg2ZkllZ3FjL0MrMW50aXVSbURQaTh5NmloRzFyNTVQNFU3Vlp1cWdJRnVGc05uM2J4THJuVzVwVVUzRk9KdzZkNjVTQWJVWk11NGxlUGgxdVoycWRUNXgxeFU1RWNMMlVHMUtEa09nNFI4YVc2TFJzWGs3NnRVU0tPOWtiTU1zZkt6SVI0dGl3azhrMjhtTnViVDdRMHhkV3luNks4Zldjd3RDVFEzOTJaeEZnd2xVZ0JRODVKVEkyN1J3R2tIeENhN1lQYWRscHZtenozZUE1VkZHMXdYRFJDbERhZG1vRlBZTlhoc3E1WVVxUUIzNTZFMXJQUHdzYlZEZCtCWEJXbi9PL042dU9rUk1rQnVvaytvSGp6cFZmaXVTSzd3RjBZY3dZUXg4bG9renZmbVM0Znp3RS90MFdjeTdzOHljZlRqQkJxN09WNDNpajlVaDgrNXV6anJob0JtWXkranFySElnYUZiVTloU2lSNEErZ1ZyWlYwSW5WdzAvUy9HUWo4aTdHd3krWE1CUW1IY04xNm1ZQnNTNG9MZzBQRVZ0MVNSY2VYNWlMbmpIb0h6aWQ4YnVZa21rV29GWVZuc3RGNERkS082N1Z2TXhPV0tkZGZiMys0RGpqdE9VQXUzUGFURjl6N1NObVNZRnNIREQ2IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiJQSUQ6OTIwOC0yMDAyLTItODg3OTI1MTkwNzAxIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZ2l2ZW5uYW1lIjoiQW5kcmVhcyBKYWNrIENocmlzdGlhbnNlbiIsImxvZ2luVHlwZSI6IktleUNhcmQiLCJwaWQiOiI5MjA4LTIwMDItMi04ODc5MjUxOTA3MDEiLCJiM2YiOiJLYldpZll2Mms0MlNzK2RrcXVuS1o1eGxWQVBCM09rQ21Uc3N3MVdWQ2VjPSIsInVzZXJJZCI6IjI0MTA4MyIsImV4cCI6MTY2OTM2NzEzNSwiaXNzIjoiRW5lcmdpbmV0IiwianRpIjoiN2EyMjFhMWMtZjAxNi00NzQ0LWFjMTktOTQzZDlmMWEzYTZkIiwidG9rZW5OYW1lIjoicDEiLCJhdWQiOiJFbmVyZ2luZXQifQ.VzQLHfJPvdzrMpdcb2CixXHYYrKBI4qvttfjShQnJOE");
+    // Here we get the access token from the json file
+    access_token_file = fopen("accessToken.json", "r");
+    fread(buffer, 5000, 1, access_token_file);
+    fclose(access_token_file);
+
+    parsed_json = json_tokener_parse(buffer);
+    json_object_object_get_ex(parsed_json, "result", &access_token);
+
+    const char *access_token_string = json_object_get_string(access_token);
+
+    char buf[json_object_get_string_len(access_token)];
+
+    strcpy(buf, access_token_string);
+
+    char header_string[json_object_get_string_len(access_token) + 23];
+    strcpy(header_string, "Authorization: Bearer ");
+
+    strcat(header_string, buf);
+
+    headers = curl_slist_append(headers, header_string);
     headers = curl_slist_append(headers, "Content-Type: application/json");
 
     curl = curl_easy_init();
@@ -180,6 +221,45 @@ void get_api(char answer)
             printf("curl_easy_perform() returned %s\n", curl_easy_strerror(res));
         }
         fclose(prices);
+        curl_easy_cleanup(curl);
+    }
+
+    curl_global_cleanup();
+}
+
+void get_api_spot_prices()
+{
+    CURL *curl;
+    CURLcode res;
+    curl_global_init(CURL_GLOBAL_ALL);
+
+    struct curl_slist *headers = NULL;
+
+    FILE *spot_prices_file;
+
+    char buffer[5000];
+
+    struct json_object *parsed_json;
+    struct json_object *access_token;
+
+    spot_prices_file = fopen("spotPrices.json", "w"); // w stands for write, it replaces the old data with the new
+
+    headers = curl_slist_append(headers, "Content-Type: application/json");
+
+    curl = curl_easy_init();
+    if (curl)
+    {
+        curl_easy_setopt(curl, CURLOPT_URL, "https://api.energidataservice.dk/dataset/Elspotprices?offset=8&limit=24&start=now-P1D&sort=HourDK&columns=HourDK,SpotPriceDKK&filter={%22PriceArea%22:[%22DK1%22]}");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, spot_prices_file);
+        res = curl_easy_perform(curl);
+
+        if (res != CURLE_OK)
+        {
+            printf("curl_easy_perform() returned %s\n", curl_easy_strerror(res));
+        }
+
+        fclose(spot_prices_file);
         curl_easy_cleanup(curl);
     }
 

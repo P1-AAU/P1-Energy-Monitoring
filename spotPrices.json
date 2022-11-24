@@ -1,0 +1,33 @@
+{
+  "total": 56,
+  "filters": "{\"PriceArea\":[\"DK1\"]}",
+  "sort": "HourDK",
+  "limit": 24,
+  "dataset": "Elspotprices",
+  "records": [
+    { "HourDK": "2022-11-24T00:00:00", "SpotPriceDKK": 1027.939941 },
+    { "HourDK": "2022-11-24T01:00:00", "SpotPriceDKK": 924.429993 },
+    { "HourDK": "2022-11-24T02:00:00", "SpotPriceDKK": 906.659973 },
+    { "HourDK": "2022-11-24T03:00:00", "SpotPriceDKK": 873.710022 },
+    { "HourDK": "2022-11-24T04:00:00", "SpotPriceDKK": 936.400024 },
+    { "HourDK": "2022-11-24T05:00:00", "SpotPriceDKK": 1114.579956 },
+    { "HourDK": "2022-11-24T06:00:00", "SpotPriceDKK": 1542.25 },
+    { "HourDK": "2022-11-24T07:00:00", "SpotPriceDKK": 2180.080078 },
+    { "HourDK": "2022-11-24T08:00:00", "SpotPriceDKK": 2298.540039 },
+    { "HourDK": "2022-11-24T09:00:00", "SpotPriceDKK": 2193.320068 },
+    { "HourDK": "2022-11-24T10:00:00", "SpotPriceDKK": 2193.909912 },
+    { "HourDK": "2022-11-24T11:00:00", "SpotPriceDKK": 2155.840088 },
+    { "HourDK": "2022-11-24T12:00:00", "SpotPriceDKK": 2029.640015 },
+    { "HourDK": "2022-11-24T13:00:00", "SpotPriceDKK": 2007.25 },
+    { "HourDK": "2022-11-24T14:00:00", "SpotPriceDKK": 2024.51001 },
+    { "HourDK": "2022-11-24T15:00:00", "SpotPriceDKK": 2233.620117 },
+    { "HourDK": "2022-11-24T16:00:00", "SpotPriceDKK": 2342.860107 },
+    { "HourDK": "2022-11-24T17:00:00", "SpotPriceDKK": 2399.899902 },
+    { "HourDK": "2022-11-24T18:00:00", "SpotPriceDKK": 2227.899902 },
+    { "HourDK": "2022-11-24T19:00:00", "SpotPriceDKK": 2126.159912 },
+    { "HourDK": "2022-11-24T20:00:00", "SpotPriceDKK": 1945.089966 },
+    { "HourDK": "2022-11-24T21:00:00", "SpotPriceDKK": 1709.939941 },
+    { "HourDK": "2022-11-24T22:00:00", "SpotPriceDKK": 1614.459961 },
+    { "HourDK": "2022-11-24T23:00:00", "SpotPriceDKK": 1291.27002 }
+  ]
+}
