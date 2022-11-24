@@ -2,8 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <curl/curl.h>
-#include <json.h>
-// https://github.com/json-c/json-c
+#include <json-c/json_object.h>
 
 #define MAX_LENGTH 30
 

@@ -1,14 +1,12 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(P1-Energy-Monitoring VERSION 0.1.0)
 
+set(CMAKE_C_STANDARD 99)
+
 include(CTest)
 enable_testing()
 
 add_executable(P1-Energy-Monitoring main.c)
-
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-include(CPack)
 
 set(CURL_LIBRARY "-lcurl")
 find_package(CURL REQUIRED)
@@ -16,5 +14,21 @@ find_package(CURL REQUIRED)
 include_directories(${CURL_INCLUDE_DIR})
 target_link_libraries(P1-Energy-Monitoring ${CURL_LIBRARIES})
 
-find_package(json-c CONFIG)
-target_link_libraries(P1-Energy-Monitoring json-c::json-c)
+# we start the inculssion of an external project here
+include(ExternalProject) # tells CMake that we use an external project
+set(EXTERNAL_INSTALL_LOCATION ${CMAKE_BINARY_DIR}/external) # tells cmake where to install it
+ExternalProject_add(jsonc-ext # we add an external dependency and call it jsonc-ext
+    GIT_REPOSITORY git@github.com:json-c/json-c.git # where to get the library from
+    GIT_TAG 79c147203e2f90806fba0487fc26ab5e649c8755 # which specific git hash to use (i.e. version), it is best practice to use a stable version, NOT their main branch (which I do here)
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION} -DCMAKE_BUILD_TYPE=Release # build flags
+) 
+
+# tell CMake where to find the external libraries
+link_directories(${EXTERNAL_INSTALL_LOCATION}/lib)
+link_directories(${EXTERNAL_INSTALL_LOCATION}/lib64)
+
+# tell CMake where to find the external headers
+include_directories(${EXTERNAL_INSTALL_LOCATION}/include)
+
+add_dependencies(P1-Energy-Monitoring jsonc-ext) # tells cmake to wait with building jsonctest untill  json-c has been build
+target_link_libraries(P1-Energy-Monitoring json-c) # link with the newly build library
