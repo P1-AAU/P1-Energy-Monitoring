@@ -154,7 +154,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=P1-Energy-Monitoring
+CMAKE_PROJECT_NAME:STATIC=P1_Energy-Monitoring
 
 //Value Computed by CMake
 CMAKE_PROJECT_VERSION:STATIC=0.1.0
@@ -300,6 +300,9 @@ DART_TESTING_TIMEOUT:STRING=1500
 //Path to a program.
 GITCOMMAND:FILEPATH=GITCOMMAND-NOTFOUND
 
+//Git command line client
+GIT_EXECUTABLE:FILEPATH=GIT_EXECUTABLE-NOTFOUND
+
 //Command to build the project
 MAKECOMMAND:STRING="C:\Program Files\JetBrains\CLion 2022.2.4\bin\cmake\win\bin\cmake.exe" --build . --config "${CTEST_CONFIGURATION_TYPE}"
 
@@ -317,6 +320,15 @@ P1-Energy-Monitoring_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 P1-Energy-Monitoring_SOURCE_DIR:STATIC=C:/Users/Christian/Documents/GitHub/P1-Energy-Monitoring
+
+//Value Computed by CMake
+P1_Energy-Monitoring_BINARY_DIR:STATIC=C:/Users/Christian/Documents/GitHub/P1-Energy-Monitoring/cmake-build-debug
+
+//Value Computed by CMake
+P1_Energy-Monitoring_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+P1_Energy-Monitoring_SOURCE_DIR:STATIC=C:/Users/Christian/Documents/GitHub/P1-Energy-Monitoring
 
 //Arguments to supply to pkg-config
 PKG_CONFIG_ARGN:STRING=
@@ -348,8 +360,6 @@ CMAKE_CACHE_PATCH_VERSION:INTERNAL=2
 CMAKE_COMMAND:INTERNAL=C:/Program Files/JetBrains/CLion 2022.2.4/bin/cmake/win/bin/cmake.exe
 //Path to cpack program executable.
 CMAKE_CPACK_COMMAND:INTERNAL=C:/Program Files/JetBrains/CLion 2022.2.4/bin/cmake/win/bin/cpack.exe
-//ADVANCED property for variable: CMAKE_CTEST_COMMAND
-CMAKE_CTEST_COMMAND-ADVANCED:INTERNAL=1
 //Path to ctest program executable.
 CMAKE_CTEST_COMMAND:INTERNAL=C:/Program Files/JetBrains/CLion 2022.2.4/bin/cmake/win/bin/ctest.exe
 //ADVANCED property for variable: CMAKE_CXX_COMPILER
@@ -518,6 +528,8 @@ CURL_INCLUDE_DIR-ADVANCED:INTERNAL=1
 DART_TESTING_TIMEOUT-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: GITCOMMAND
 GITCOMMAND-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: GIT_EXECUTABLE
+GIT_EXECUTABLE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: MAKECOMMAND
 MAKECOMMAND-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: MEMORYCHECK_COMMAND
