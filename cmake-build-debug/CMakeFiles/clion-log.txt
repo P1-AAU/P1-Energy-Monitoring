@@ -1,0 +1,11 @@
+"C:\Program Files\JetBrains\CLion 2022.2.4\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=C:/Program Files/JetBrains/CLion 2022.2.4/bin/ninja/win/ninja.exe" -G Ninja -S C:\Users\Christian\Documents\GitHub\P1-Energy-Monitoring -B C:\Users\Christian\Documents\GitHub\P1-Energy-Monitoring\cmake-build-debug
+CMake Error at C:/Program Files/JetBrains/CLion 2022.2.4/bin/cmake/win/share/cmake-3.23/Modules/FindPackageHandleStandardArgs.cmake:230 (message):
+  Could NOT find CURL (missing: CURL_INCLUDE_DIR)
+Call Stack (most recent call first):
+  C:/Program Files/JetBrains/CLion 2022.2.4/bin/cmake/win/share/cmake-3.23/Modules/FindPackageHandleStandardArgs.cmake:594 (_FPHSA_FAILURE_MESSAGE)
+  C:/Program Files/JetBrains/CLion 2022.2.4/bin/cmake/win/share/cmake-3.23/Modules/FindCURL.cmake:181 (find_package_handle_standard_args)
+  CMakeLists.txt:12 (find_package)
+
+
+-- Configuring incomplete, errors occurred!
+See also "C:/Users/Christian/Documents/GitHub/P1-Energy-Monitoring/cmake-build-debug/CMakeFiles/CMakeOutput.log".
