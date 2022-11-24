@@ -20,14 +20,12 @@ link_directories(${EXTERNAL_INSTALL_LOCATION}/lib64)
 # tell CMake where to find the external headers
 include_directories(${EXTERNAL_INSTALL_LOCATION}/include)
 
-# we end here, but we also have to add it in the src/CMakeLists.txt as a dependency
-
-
 add_executable(P1_Energy-Monitoring main.c)
 
 add_dependencies(P1_Energy-Monitoring jsonc-ext) # tells cmake to wait with building jsonctest untill  json-c has been build
 target_link_libraries(P1_Energy-Monitoring PRIVATE json-c) # link with the newly build library
 
+# this is for the curl library
 set(CURL_LIBRARY "-lcurl")
 find_package(CURL REQUIRED)
 
