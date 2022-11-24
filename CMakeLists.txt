@@ -1,18 +1,8 @@
-cmake_minimum_required(VERSION 3.0.0)
-project(P1-Energy-Monitoring VERSION 0.1.0)
+cmake_minimum_required(VERSION 3.1)
+
+project(P1_Energy-Monitoring C)
 
 set(CMAKE_C_STANDARD 99)
-
-include(CTest)
-enable_testing()
-
-add_executable(P1-Energy-Monitoring main.c)
-
-set(CURL_LIBRARY "-lcurl")
-find_package(CURL REQUIRED)
-
-include_directories(${CURL_INCLUDE_DIR})
-target_link_libraries(P1-Energy-Monitoring ${CURL_LIBRARIES})
 
 # we start the inculssion of an external project here
 include(ExternalProject) # tells CMake that we use an external project
@@ -30,5 +20,16 @@ link_directories(${EXTERNAL_INSTALL_LOCATION}/lib64)
 # tell CMake where to find the external headers
 include_directories(${EXTERNAL_INSTALL_LOCATION}/include)
 
-add_dependencies(P1-Energy-Monitoring jsonc-ext) # tells cmake to wait with building jsonctest untill  json-c has been build
-target_link_libraries(P1-Energy-Monitoring json-c) # link with the newly build library
+# we end here, but we also have to add it in the src/CMakeLists.txt as a dependency
+
+
+add_executable(P1_Energy-Monitoring main.c)
+
+add_dependencies(P1_Energy-Monitoring jsonc-ext) # tells cmake to wait with building jsonctest untill  json-c has been build
+target_link_libraries(P1_Energy-Monitoring PRIVATE json-c) # link with the newly build library
+
+set(CURL_LIBRARY "-lcurl")
+find_package(CURL REQUIRED)
+
+include_directories(${CURL_INCLUDE_DIR})
+target_link_libraries(P1_Energy-Monitoring PRIVATE ${CURL_LIBRARIES})
