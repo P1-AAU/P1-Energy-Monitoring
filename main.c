@@ -92,7 +92,7 @@ void print_devices(device *devices)
 size_t save_api_result(char *ptr, size_t size, size_t nmemb, void *not_used)
 {
     FILE *file;
-    file = fopen("accessToken.json", "w"); // w stands for write, it replaces the old data with the new
+    file = fopen("../accessToken.json", "w"); // w stands for write, it replaces the old data with the new
     fprintf(file, "%s", ptr);
     fclose(file);
 
@@ -119,7 +119,7 @@ void get_api_fees(char answer)
 
     if (answer == 'y')
     {
-        access_token_file = fopen("accessToken.json", "w"); // w stands for write, it replaces the old data with the new
+        access_token_file = fopen("../accessToken.json", "w"); // w stands for write, it replaces the old data with the new
 
         headers = curl_slist_append(headers, "Authorization: Bearer " REFRESH_TOKEN);
 
@@ -144,7 +144,7 @@ void get_api_fees(char answer)
     {
 
         // Here we get the access token from the json file
-        access_token_file = fopen("accessToken.json", "r");
+        access_token_file = fopen("../accessToken.json", "r");
         fread(buffer, 5000, 1, access_token_file);
         fclose(access_token_file);
 
@@ -167,7 +167,7 @@ void get_api_fees(char answer)
         curl = curl_easy_init();
         if (curl)
         {
-            metering_points = fopen("meter.json", "w");
+            metering_points = fopen("../meter.json", "w");
             curl_easy_setopt(curl, CURLOPT_URL, "https://api.eloverblik.dk/customerapi/api/meteringpoints/meteringpoints?includeAll=false");
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, metering_points);
@@ -183,7 +183,7 @@ void get_api_fees(char answer)
     }
 
     // Here we get the access token from the json file
-    access_token_file = fopen("accessToken.json", "r");
+    access_token_file = fopen("../accessToken.json", "r");
     fread(buffer, 5000, 1, access_token_file);
     fclose(access_token_file);
 
@@ -209,7 +209,7 @@ void get_api_fees(char answer)
     {
         char *data = "{\"meteringPoints\":{\"meteringPoint\" : [\"571313105202878672\"]}}";
 
-        prices = fopen("output.json", "w");
+        prices = fopen("../output.json", "w");
         curl_easy_setopt(curl, CURLOPT_URL, "https://api.eloverblik.dk/customerapi/api/meteringpoints/meteringpoint/getcharges");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
@@ -242,7 +242,7 @@ void get_api_spot_prices()
     struct json_object *parsed_json;
     struct json_object *access_token;
 
-    spot_prices_file = fopen("spotPrices.json", "w"); // w stands for write, it replaces the old data with the new
+    spot_prices_file = fopen("../spotPrices.json", "w"); // w stands for write, it replaces the old data with the new
 
     headers = curl_slist_append(headers, "Content-Type: application/json");
 
