@@ -163,7 +163,7 @@ void get_api_fees(char answer)
         strcat(header_string, buf);
 
         headers = curl_slist_append(headers, header_string);
-
+    
         curl = curl_easy_init();
         if (curl)
         {
@@ -249,7 +249,7 @@ void get_api_spot_prices()
     curl = curl_easy_init();
     if (curl)
     {
-        curl_easy_setopt(curl, CURLOPT_URL, "https://api.energidataservice.dk/dataset/Elspotprices?offset=8&limit=24&start=now-P1D&sort=HourDK&columns=HourDK,SpotPriceDKK&filter={%22PriceArea%22:[%22DK1%22]}");
+        curl_easy_setopt(curl, CURLOPT_URL, "https://api.energidataservice.dk/dataset/Elspotprices?offset=11&limit=24&start=now-P1D&sort=HourDK&columns=HourDK,SpotPriceDKK&filter={%22PriceArea%22:[%22DK1%22]}");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, spot_prices_file);
         res = curl_easy_perform(curl);
