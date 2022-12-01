@@ -53,8 +53,3 @@ dkms.conf
 build
 cmake-build-debug
 .idea
-
-accessToken.json
-meter.json
-output.json
-spotPrices.json
