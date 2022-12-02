@@ -4,6 +4,7 @@
 #include <curl/curl.h>
 #include <json-c/json_object.h>
 #include <json-c/json_tokener.h>
+#include <time.h>
 
 #define MAX_LENGTH 30
 #define HOURS_IN_DAY 24
@@ -421,6 +422,11 @@ void readPrices_tariffs(prices *price_data) {
 
 void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *result)
 {
+    time_t rawtime;
+    struct tm * timeinfo;
+    time( &rawtime );
+    timeinfo = localtime( &rawtime );
+    int current_hour = timeinfo->tm_hour;
 
     for (int i = 0; i < HOURS_IN_DAY; i++)
     {
@@ -433,10 +439,15 @@ void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *re
         result->VAT[i] += (SpotPriceDKK[i] + result->total_tax[i]) * 0.25;
         result->total_price[i] += (SpotPriceDKK[i] + result->total_tax[i]) * VAT_CONST;
     }
-
-    for (int i = 0; i < HOURS_IN_DAY; i++)
+    for(int i = 0; i < HOURS_IN_DAY; i++)
     {
-        printf("Hour: %d Total Price: %lf Total Tax: %lf VAT: %lf \n",i+14, result->total_price[i], result->total_tax[i], result->VAT[i]);
+        printf("Hour: %d Total Price: %lf Total Tax: %lf VAT: %lf \n",current_hour, result->total_price[i], result->total_tax[i], result->VAT[i]);
+        if(current_hour==23)
+        {
+            current_hour = 0;
+        }else
+        {
+            current_hour++;
+        }
     }
-
 }
