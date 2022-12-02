@@ -264,4 +264,44 @@ void get_api_spot_prices()
     }
 
     curl_global_cleanup();
+    
+    void readPrices()
+{
+    FILE *spotPrices_file; //Opens the spotPrices file
+    FILE *output; //Opens the file with personal Tariffs
+    char buffer[6000];
+    int exists;
+
+    // Here we get the access token from the json file
+    json_object *parsed_json;
+    json_object *records;
+    json_object *spotPrices;
+    json_object *spotPrice;
+
+    size_t n_prices;
+    size_t i;
+
+    spotPrices_file = fopen("../spotPrices.json", "r");
+    fread(buffer, 6000, 1, spotPrices_file);
+    parsed_json = json_tokener_parse(buffer);
+    json_object_object_get_ex(parsed_json, "records", &records);
+
+    putchar('\n');
+    n_prices = json_object_array_length(records);
+    printf("Found %lu prices", n_prices);
+
+    putchar('\n');
+
+    for(i=0;i<n_prices;i++)
+    {
+        spotPrices = json_object_array_get_idx(records, i);
+        printf("%lu, %s\n", i+1, json_object_get_string(spotPrices));
+    }
+
+    json_object_object_get_ex(spotPrices,"SpotPriceDKK", &spotPrice);
+
+    putchar('\n');
+    
+    fclose(spotPrices_file);
+}
 }
