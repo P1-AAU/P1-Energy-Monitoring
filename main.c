@@ -35,7 +35,7 @@ typedef struct {
     double VAT[24];
 } total_prices;
 
-// prototypes
+// Prototypes
 void fill_device(FILE *source, device *devices);
 
 void print_devices(device *devices);
@@ -50,8 +50,11 @@ void readPrices_tariffs(prices *price_data);
 
 void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *result);
 
+void print_prices(double *SpotPriceDKK, total_prices *result);
 
-        int main() {
+
+int main()
+{
     FILE source;
     device *devices;
     prices *price_data;
@@ -78,10 +81,8 @@ void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *re
 
     readPrices_spotPrice(SpotPricesDKK);
     readPrices_tariffs(price_data);
-    printf("LOOK HERE DOG\n");
-
     total_price_calc(SpotPricesDKK, price_data, result);
-
+    print_prices(SpotPricesDKK,result);
 
     /* fill_device(&source, devices);
     print_devices(devices); */
@@ -407,6 +408,7 @@ void readPrices_tariffs(prices *price_data) {
     json_object_object_get_ex(json_object_array_get_idx(system_tariff_array, 0), "price", &system_tariff_price);
     json_object_object_get_ex(json_object_array_get_idx(balance_tariff_array, 0), "price", &balance_tariff_price);
     json_object_object_get_ex(json_object_array_get_idx(electricity_tax_array, 0), "price", &electricity_tax_price);
+
     price_data->net_tariff_transmission = json_object_get_double(net_tariff_transmission_price);
     price_data->system_tariff = json_object_get_double(system_tariff_price);
     price_data->balance_tariff = json_object_get_double(balance_tariff_price);
@@ -422,12 +424,6 @@ void readPrices_tariffs(prices *price_data) {
 
 void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *result)
 {
-    time_t rawtime;
-    struct tm * timeinfo;
-    time( &rawtime );
-    timeinfo = localtime( &rawtime );
-    int current_hour = timeinfo->tm_hour;
-
     for (int i = 0; i < HOURS_IN_DAY; i++)
     {
         result->total_tax[i] += price_data->net_tariff[i];
@@ -439,9 +435,20 @@ void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *re
         result->VAT[i] += (SpotPriceDKK[i] + result->total_tax[i]) * 0.25;
         result->total_price[i] += (SpotPriceDKK[i] + result->total_tax[i]) * VAT_CONST;
     }
+}
+
+void print_prices(double *SpotPriceDKK, total_prices *result)
+{
+    time_t rawtime;
+    struct tm * timeinfo;
+    time( &rawtime );
+    timeinfo = localtime( &rawtime );
+    int current_hour = timeinfo->tm_hour;
+
+    printf("Hour \t Total-Price \t Spot-Price \t Tax-Total \t VAT \n");
     for(int i = 0; i < HOURS_IN_DAY; i++)
     {
-        printf("Hour: %d Total Price: %lf Total Tax: %lf VAT: %lf \n",current_hour, result->total_price[i], result->total_tax[i], result->VAT[i]);
+        printf("%02d:00 \t %8lf \t %12lf \t %12lf \t %6lf \n",current_hour, result->total_price[i], SpotPriceDKK[i], result->total_tax[i], result->VAT[i]);
         if(current_hour==23)
         {
             current_hour = 0;
@@ -451,3 +458,4 @@ void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *re
         }
     }
 }
+
