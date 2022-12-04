@@ -34,16 +34,40 @@ int main()
 
     /* fill_device(&source, devices);
     print_devices(devices); */
-    
+
     return 0;
 }
 
 size_t save_api_result(char *ptr, size_t size, size_t nmemb, void *not_used)
 {
     FILE *file;
-    file = fopen("../accessToken.json", "w"); // w stands for write, it replaces the old data with the new
-    fprintf(file, "%s", ptr);
+
+    json_object *parsed_json;
+    json_object *meter_parent;
+    json_object *meter_child;
+    json_object *meter_point_id;
+
+    parsed_json = json_tokener_parse(ptr);
+    json_object_object_get_ex(parsed_json, "result", &meter_parent);
+    meter_child = json_object_array_get_idx(meter_parent, 0);
+    json_object_object_get_ex(meter_child, "meteringPointId", &meter_point_id);
+
+    char *data = "{\"meteringPoints\":{\"meteringPoint\" : [\"571313105202878672\"]}}";
+
+    json_object *new_meter_parent = json_object_new_object();
+    json_object *new_meter_child = json_object_new_object();
+    json_object *new_meter_child_array = json_object_new_array();
+
+    json_object_array_add(new_meter_child_array, json_object_get(meter_point_id));
+    json_object_object_add(new_meter_child, "meteringPoint", new_meter_child_array);
+    json_object_object_add(new_meter_parent, "meteringPoints", new_meter_child);
+
+    file = fopen("../meter.json", "w"); // w stands for write, it replaces the old data with the new
+    fprintf(file, "%s", json_object_get_string(new_meter_parent));
     fclose(file);
+
+    json_object_put(new_meter_parent);
+    json_object_put(parsed_json);
 
     // returns the size of bytes to check if any dataloss has occured
     return size * nmemb;
@@ -112,21 +136,20 @@ void get_api_fees(char answer)
         strcat(header_string, buf);
 
         headers = curl_slist_append(headers, header_string);
-    
+
         curl = curl_easy_init();
         if (curl)
         {
-            metering_points = fopen("../meter.json", "w");
             curl_easy_setopt(curl, CURLOPT_URL, "https://api.eloverblik.dk/customerapi/api/meteringpoints/meteringpoints?includeAll=false");
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, metering_points);
+            // curl_easy_setopt(curl, CURLOPT_WRITEDATA, metering_points);
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, save_api_result);
             res = curl_easy_perform(curl);
 
             if (res != CURLE_OK)
             {
                 printf("curl_easy_perform() returned %s\n", curl_easy_strerror(res));
             }
-            fclose(metering_points);
             curl_easy_cleanup(curl);
         }
     }
@@ -158,10 +181,17 @@ void get_api_fees(char answer)
     {
         char *data = "{\"meteringPoints\":{\"meteringPoint\" : [\"571313105202878672\"]}}";
 
+        metering_points = fopen("../meter.json", "r");
+        char meter_buffer[1000];
+        fread(meter_buffer, 1000, 1, metering_points);
+        fclose(metering_points);
+
+        json_object *parsed_meter = json_tokener_parse(meter_buffer);
+
         prices = fopen("../output.json", "w");
         curl_easy_setopt(curl, CURLOPT_URL, "https://api.eloverblik.dk/customerapi/api/meteringpoints/meteringpoint/getcharges");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_object_get_string(parsed_meter));
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, prices);
         res = curl_easy_perform(curl);
 
