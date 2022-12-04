@@ -1,1 +1,143 @@
-{"result":[{"result":{"fees":[],"meteringPointId":"571313105202878672","subscriptions":[{"price":24.166667,"quantity":1,"name":"Net abo B lav forbrug","description":"Abonnement, hvor aftagepunktet typisk er på 0,4 kV-siden af en 10-20/0,4 kV transformerstation med en timeaflæst måler.\r\n","owner":"5790001089030","validFromDate":"2020-12-31T23:00:00.000Z","validToDate":null,"periodType":"P1M"},{"price":-24.166667,"quantity":1,"name":"Rabat på abonnement N1 A/S","description":"Rabat på abonnement N1 A/S","owner":"5790001089030","validFromDate":"2022-11-30T23:00:00.000Z","validToDate":null,"periodType":"P1M"}],"tariffs":[{"prices":[{"position":"1","price":0.154432},{"position":"2","price":0.154432},{"position":"3","price":0.154432},{"position":"4","price":0.154432},{"position":"5","price":0.154432},{"position":"6","price":0.154432},{"position":"7","price":0.292133},{"position":"8","price":0.433735},{"position":"9","price":0.433735},{"position":"10","price":0.433735},{"position":"11","price":0.433735},{"position":"12","price":0.433735},{"position":"13","price":0.433735},{"position":"14","price":0.433735},{"position":"15","price":0.433735},{"position":"16","price":0.433735},{"position":"17","price":0.433735},{"position":"18","price":0.433735},{"position":"19","price":0.433735},{"position":"20","price":0.433735},{"position":"21","price":0.292133},{"position":"22","price":0.292133},{"position":"23","price":0.292133},{"position":"24","price":0.292133}],"name":"Nettarif B lav","description":"Tarif, hvor aftagepunktet typisk er på 0,4 kVsiden af en 10-20/0,4 kV transformerstation med en timeaflæst måler\r\n","owner":"5790001089030","validFromDate":"2020-12-31T23:00:00.000Z","validToDate":null,"periodType":"PT1H"},{"prices":[{"position":"1","price":-0.154432},{"position":"2","price":-0.154432},{"position":"3","price":-0.154432},{"position":"4","price":-0.154432},{"position":"5","price":-0.154432},{"position":"6","price":-0.154432},{"position":"7","price":-0.292133},{"position":"8","price":-0.433735},{"position":"9","price":-0.433735},{"position":"10","price":-0.433735},{"position":"11","price":-0.433735},{"position":"12","price":-0.433735},{"position":"13","price":-0.433735},{"position":"14","price":-0.433735},{"position":"15","price":-0.433735},{"position":"16","price":-0.433735},{"position":"17","price":-0.433735},{"position":"18","price":-0.433735},{"position":"19","price":-0.433735},{"position":"20","price":-0.433735},{"position":"21","price":-0.292133},{"position":"22","price":-0.292133},{"position":"23","price":-0.292133},{"position":"24","price":-0.292133}],"name":"Rabat på nettarif N1 A/S","description":"Rabat på nettarif N1 A/S\r\n","owner":"5790001089030","validFromDate":"2020-12-31T23:00:00.000Z","validToDate":null,"periodType":"PT1H"},{"prices":[{"position":"1","price":0.049}],"name":"Transmissions nettarif","description":"Netafgiften, for både forbrugere og producenter, dækker omkostninger til drift og vedligehold af det overordnede elnet (132/150 og 400 kv nettet) og drift og vedligehold af udlandsforbindelserne.","owner":"5790000432752","validFromDate":"2017-12-31T23:00:00.000Z","validToDate":null,"periodType":"P1D"},{"prices":[{"position":"1","price":0.061}],"name":"Systemtarif","description":"Systemafgiften dækker omkostninger til forsyningssikkerhed og elforsyningens kvalitet.","owner":"5790000432752","validFromDate":"2017-12-31T23:00:00.000Z","validToDate":null,"periodType":"P1D"},{"prices":[{"position":"1","price":0.00229}],"name":"Balancetarif for forbrug","description":"Balancetarif for forbrug","owner":"5790000432752","validFromDate":"2017-12-31T23:00:00.000Z","validToDate":"2022-12-31T23:00:00.000Z","periodType":"P1D"},{"prices":[{"position":"1","price":0.723}],"name":"Elafgift","description":"Elafgiften","owner":"5790000432752","validFromDate":"2017-12-31T23:00:00.000Z","validToDate":null,"periodType":"P1D"}]},"success":true,"errorCode":10000,"errorText":"NoError","id":"571313105202878672","stackTrace":null}]}
+{
+  "result": [
+    {
+      "result": {
+        "fees": [],
+        "meteringPointId": "571313105202878672",
+        "subscriptions": [
+          {
+            "price": 24.166667,
+            "quantity": 1,
+            "name": "Net abo B lav forbrug",
+            "description": "Abonnement, hvor aftagepunktet typisk er på 0,4 kV-siden af en 10-20/0,4 kV transformerstation med en timeaflæst måler.\r\n",
+            "owner": "5790001089030",
+            "validFromDate": "2020-12-31T23:00:00.000Z",
+            "validToDate": null,
+            "periodType": "P1M"
+          },
+          {
+            "price": -24.166667,
+            "quantity": 1,
+            "name": "Rabat på abonnement N1 A/S",
+            "description": "Rabat på abonnement N1 A/S",
+            "owner": "5790001089030",
+            "validFromDate": "2022-11-30T23:00:00.000Z",
+            "validToDate": null,
+            "periodType": "P1M"
+          }
+        ],
+        "tariffs": [
+          {
+            "prices": [
+              { "position": "1", "price": 0.154432 },
+              { "position": "2", "price": 0.154432 },
+              { "position": "3", "price": 0.154432 },
+              { "position": "4", "price": 0.154432 },
+              { "position": "5", "price": 0.154432 },
+              { "position": "6", "price": 0.154432 },
+              { "position": "7", "price": 0.154432 },
+              { "position": "8", "price": 0.154432 },
+              { "position": "9", "price": 0.154432 },
+              { "position": "10", "price": 0.154432 },
+              { "position": "11", "price": 0.154432 },
+              { "position": "12", "price": 0.154432 },
+              { "position": "13", "price": 0.154432 },
+              { "position": "14", "price": 0.154432 },
+              { "position": "15", "price": 0.154432 },
+              { "position": "16", "price": 0.154432 },
+              { "position": "17", "price": 0.154432 },
+              { "position": "18", "price": 0.154432 },
+              { "position": "19", "price": 0.154432 },
+              { "position": "20", "price": 0.154432 },
+              { "position": "21", "price": 0.154432 },
+              { "position": "22", "price": 0.154432 },
+              { "position": "23", "price": 0.154432 },
+              { "position": "24", "price": 0.154432 }
+            ],
+            "name": "Nettarif B lav",
+            "description": "Tarif, hvor aftagepunktet typisk er på 0,4 kVsiden af en 10-20/0,4 kV transformerstation med en timeaflæst måler\r\n",
+            "owner": "5790001089030",
+            "validFromDate": "2020-12-31T23:00:00.000Z",
+            "validToDate": null,
+            "periodType": "PT1H"
+          },
+          {
+            "prices": [
+              { "position": "1", "price": -0.154432 },
+              { "position": "2", "price": -0.154432 },
+              { "position": "3", "price": -0.154432 },
+              { "position": "4", "price": -0.154432 },
+              { "position": "5", "price": -0.154432 },
+              { "position": "6", "price": -0.154432 },
+              { "position": "7", "price": -0.154432 },
+              { "position": "8", "price": -0.154432 },
+              { "position": "9", "price": -0.154432 },
+              { "position": "10", "price": -0.154432 },
+              { "position": "11", "price": -0.154432 },
+              { "position": "12", "price": -0.154432 },
+              { "position": "13", "price": -0.154432 },
+              { "position": "14", "price": -0.154432 },
+              { "position": "15", "price": -0.154432 },
+              { "position": "16", "price": -0.154432 },
+              { "position": "17", "price": -0.154432 },
+              { "position": "18", "price": -0.154432 },
+              { "position": "19", "price": -0.154432 },
+              { "position": "20", "price": -0.154432 },
+              { "position": "21", "price": -0.154432 },
+              { "position": "22", "price": -0.154432 },
+              { "position": "23", "price": -0.154432 },
+              { "position": "24", "price": -0.154432 }
+            ],
+            "name": "Rabat på nettarif N1 A/S",
+            "description": "Rabat på nettarif N1 A/S\r\n",
+            "owner": "5790001089030",
+            "validFromDate": "2020-12-31T23:00:00.000Z",
+            "validToDate": null,
+            "periodType": "PT1H"
+          },
+          {
+            "prices": [{ "position": "1", "price": 0.049 }],
+            "name": "Transmissions nettarif",
+            "description": "Netafgiften, for både forbrugere og producenter, dækker omkostninger til drift og vedligehold af det overordnede elnet (132/150 og 400 kv nettet) og drift og vedligehold af udlandsforbindelserne.",
+            "owner": "5790000432752",
+            "validFromDate": "2017-12-31T23:00:00.000Z",
+            "validToDate": null,
+            "periodType": "P1D"
+          },
+          {
+            "prices": [{ "position": "1", "price": 0.061 }],
+            "name": "Systemtarif",
+            "description": "Systemafgiften dækker omkostninger til forsyningssikkerhed og elforsyningens kvalitet.",
+            "owner": "5790000432752",
+            "validFromDate": "2017-12-31T23:00:00.000Z",
+            "validToDate": null,
+            "periodType": "P1D"
+          },
+          {
+            "prices": [{ "position": "1", "price": 0.00229 }],
+            "name": "Balancetarif for forbrug",
+            "description": "Balancetarif for forbrug",
+            "owner": "5790000432752",
+            "validFromDate": "2017-12-31T23:00:00.000Z",
+            "validToDate": "2022-12-31T23:00:00.000Z",
+            "periodType": "P1D"
+          },
+          {
+            "prices": [{ "position": "1", "price": 0.723 }],
+            "name": "Elafgift",
+            "description": "Elafgiften",
+            "owner": "5790000432752",
+            "validFromDate": "2017-12-31T23:00:00.000Z",
+            "validToDate": null,
+            "periodType": "P1D"
+          }
+        ]
+      },
+      "success": true,
+      "errorCode": 10000,
+      "errorText": "NoError",
+      "id": "571313105202878672",
+      "stackTrace": null
+    }
+  ]
+}
