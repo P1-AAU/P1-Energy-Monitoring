@@ -263,7 +263,7 @@ void readPrices_spotPrice(double *SpotPriceDKK) {
     json_object_object_get_ex(parsed_json, "records", &records);
     putchar('\n');
     n_prices = json_object_array_length(records);
-    printf("Found %lu prices", n_prices);
+    printf("Found %lu SpotPrices", n_prices);
 
     putchar('\n');
 
@@ -333,7 +333,7 @@ void readPrices_tariffs(prices *price_data) {
     json_object_object_get_ex(electricity_tax_parent, "prices", &electricity_tax_array);
 
     n_prices = json_object_array_length(tariff_prices);
-    printf("Found %lu prices", n_prices);
+    printf("Found %lu tariff prices", n_prices);
     putchar('\n');
 
     //Here we get the actual prices
