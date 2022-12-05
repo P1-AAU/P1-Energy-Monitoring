@@ -9,6 +9,8 @@
 #define MAX_LENGTH 30
 #define HOURS_IN_DAY 24
 #define VAT_CONST 1.25
+#define BUFFER_SIZE 5000
+#define METERINGPOINT_LENGTH 18
 
 #define REFRESH_TOKEN "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlblR5cGUiOiJDdXN0b21lckFQSV9SZWZyZXNoIiwidG9rZW5pZCI6ImJhMTE2NzQ4LTI4ZGYtNDkwYi04YjI1LTc1Mzk4MWExMGM5YSIsIndlYkFwcCI6WyJDdXN0b21lckFwaSIsIkN1c3RvbWVyQXBwQXBpIl0sInZlcnNpb24iOiIyIiwiaWRlbnRpdHlUb2tlbiI6IlNsN09KdDdYU3VGaDhoL081c3Fza3BCNk1jN0VxQWxqMUloNmFoTGlqbWx6bFdGdkg5cjM3SnJvWHJjMlN5R0VpOXdKejJ2clpzUm1iZHJkcy95MVRTRloxZXRuMXNldURnL09wM1VSQmRONUx4MDdGTGpDSDQyeXlhU3oxaDdKcGw0Uk9sODZ1TEEzaXB5cDRWWGtmOFlOcmdTdU9wOHJCUm1SRnlWZjBuQTVWdnlOZnFzTklSM1g0czFzQWdkOWJyZVkxS3ZoYVpDVWZrTzIzVkorcnViTXlybHp6ekJYQy9zb3dSNndQWWUzekZ1Qmhkclk4L001eDEyTGNmR2hQeFBLd1FyMk1ZRWk0M21KTnMyOUZaL0Y5U0lMMS9udHFQTnhkV1pzdm5FSjJKVTVpTmRnbmhoMG1YSkdKSFp0SjdoUU9kUUZtR3FWZnFQMVNFWjcxbUU5MkxzTG95eklyMFAzeVBEYW5IM0ZSMysrRk5KT3A0ZzZhZTlpWHN4MUljUFo5dFRuQzJZNkgyeHpvNysvQlZYL2dISGF3ZkVaVk5QandPRExiSDdJL20vMU9kZmNHN29FcTRHZitYeHdUcjQ4VWl0N3crTk5LTWxydCtESGRaMHZjU0tSQ2FaTncxVUVnNExMTU9QQlJqR3k4Mk95U3ozVEZTZGhzWURkR2JxMmRlRHhhWjJDTkFSRG5qWE53bVpmak9QMG03ZWk4dXBOV0wraWRjbGkzVVhFTkVaMWVISWIvbE16VGMzSmkyc01DK0xSdk1YR05rR244emxDOHNTa2h6MmMvY0sxbExGK0ZVaTkwaFBKWW8rVkhvRzhsZzJHa3l6OU5naDhaNGx2cXdEMEJhbndmTnMvZlVaVlFjc2Y5VHJWYmRRQ0pIVjk3bENjWExPMFVzdS9jQjdqQm02aTlpZ1E3Tmp3b3RyV21jY0VPbE9ubjVDTG52VjZhTGdjMkZzRjk4WlRidzhVTjJicFk4OWEvM05rZFpCUEJHeWtvU0xCNmtrWTkybk9kajJPdVdaSzVITExhU2ovdHJzMjdYaTNEWVp2Y1RmbG1WWFJrQWJ0QnVDeTd5T1E2YXVtNUFvdmF0VEdrNlQ0NHl3V2wxKzU2ZVF1QzF3aXhRZkRhTzlTSmhtVnoxOWxaOWZnM3BJV3BFakgvczEvc1dzcXdaS001QU9SUkxyQTFDOEZNTnh3OFlRZmpVRFAxWWxFM2VzYWJyTnBDT1dUeUVlNjNra0U0YzlZRi9hQTFIb1ljekVZNzJqNkF1akE2SnRVR0lQcENUMmZSOEQ4eTNhMjF1T3MxMmJPVEtaeGU3SHNQTkZkOTZ5RlNWYXRqRE1rYzZOaTZSY0VEOWp0K1RLSmZuZWtXK1FiZ1ZTZmdaRWQ4NW85ZXIwR09HRklYQXcvTU81Tjh5MGZqRzQ4cjJwamhlcnlEUVR4NkowbUVGSXVMVEU0Qlk5Y1dBbUwyL25RMUhJSUJhUGIyM2R3KzF6NjhrdmkzWEs2M0JiRmJnYzIrN1JxWXpWWFpvK1ZQTzMzR3RpTHBXUDZ2THRvNmFydU1wMG9KWTZDMnc2YnowK3pUTkV4TmZPNk9INFNqcE1XTC9kSElQeWQrZGtDRkJ0dkpYeTN3eHhhamR3U2V2Y1hZWXdURTJDTStyMmR5VFFVUW5uNk5QN0IvNTNtOWRjMGpObW1HdFBQWlQrVi9kdEVuNWVUaGVJcUQwWDJseXJBbHJqc2prVXFzOERGcWJ5RUV4Y1lsWTJGd1RFampHdmdLSUk0N0dpNjlpTWIwMWZ4cDZuQ3hiZnh4V2lHc1k0MnlWWnFmR29RY1ZVV3hkN1U4TWpVNkh0QTh2bTAxUE5yRnVzTVhnd2I0aEw1M2lCWTdsQmlKZGxGM2dRSnVyTmNWVDRVMXp0RlBJWG91WlVNZHpqMkpPbVE5WmRHRmdLbE5YelNsVGM0Q0VBMHlyaDk2eFNqY25wSXZmaE0xV0x2QW13VTN5a29ScU1ia2lBdCtjS0JZdnFHaGhranIvRXplMWRCYjNkblR1NUNPdE1GeFBvMVozcEV1bWg1bTlUL3c0Ni9lRDhMamE1azVTczNrekFBUWZFdmVidnB1L0NPU01FWXRUTXpTeGpINitVSXZhZHlpZUVlTWlOUy80OGdPZTB4K0ZEVHlXVURzMysvU09iUXU5ckhkMkVWSm5UNFNiOTlneVQvUGg2UFRsTDQ3cWxwVEVwYXlxb01HTkV6anhyZWNsZHpRNUNQbXEzSDlaY2VnSllVdTJQTm9FOEhvYSt3MWJpck91R0FMYnVia2lCSVlxQS8ydGFSMllIaTRHSGt2M1VBSGpNQWpnYUdaMVFXb2Z5L3JXQ25HVjE4ZGRzb0w1a1ZYQUxYZ2xnOXZQTWFQN2JmY1gyb0g5bFZkK0hvbUUyak1DanBFNGh3R0paK1pmMHFMTXNUam5aSUZwdU9NL0N1U3BxWTNOcEp3UExOaytCRkROTGFncVVDbnJXYUhqNFpURVN1ekVpL25GZVRDaVd6eHVHMUxweHNaOVA4UThCWCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiUElEOjkyMDgtMjAwMi0yLTMzODA3NDY3NjM3MSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2dpdmVubmFtZSI6IkFkb21hcyBDaXBseXMiLCJsb2dpblR5cGUiOiJLZXlDYXJkIiwicGlkIjoiOTIwOC0yMDAyLTItMzM4MDc0Njc2MzcxIiwiYjNmIjoiL0pBYXZoT3lzU0ZjWVBqM0ZIK1RUUHovbmc3WG84NGZHZ3B3MlhLdGZJRT0iLCJ1c2VySWQiOiI1NjgxMzEiLCJleHAiOjE3MDE1MTI2NTgsImlzcyI6IkVuZXJnaW5ldCIsImp0aSI6ImJhMTE2NzQ4LTI4ZGYtNDkwYi04YjI1LTc1Mzk4MWExMGM5YSIsInRva2VuTmFtZSI6IlByb2pla3QiLCJhdWQiOiJFbmVyZ2luZXQifQ.67x-rcNmBqTJOn4U37skMcsX5KfkfbNfu2Kt765Id5c"
 
@@ -205,6 +207,7 @@ void get_api_fees(char answer) {
             if (res != CURLE_OK) {
                 printf("curl_easy_perform() returned %s\n", curl_easy_strerror(res));
             }
+            //Flushing the file, so we can access the information, whilst running
             fclose(metering_points);
             curl_easy_cleanup(curl);
         }
@@ -293,7 +296,6 @@ void get_api_spot_prices() {
 
 void readPrices_spotPrice(double *SpotPriceDKK) {
     FILE *spotPrices_file; //Opens the spotPrices file
-    FILE *output; //Opens the file with personal Tariffs
     char buffer[6000];
 
     // Here we get the access token from the json file
@@ -424,6 +426,12 @@ void readPrices_tariffs(prices *price_data) {
 
 void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *result)
 {
+    time_t rawtime;
+    struct tm * timeinfo;
+    time( &rawtime );
+    timeinfo = localtime( &rawtime );
+    int current_hour = timeinfo->tm_hour;
+
     for (int i = 0; i < HOURS_IN_DAY; i++)
     {
         result->total_tax[i] += price_data->net_tariff[i];
@@ -432,8 +440,8 @@ void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *re
         result->total_tax[i] += price_data->system_tariff;
         result->total_tax[i] += price_data->balance_tariff;
         result->total_tax[i] += price_data->electricity_tax;
-        result->VAT[i] += (SpotPriceDKK[i] + result->total_tax[i]) * 0.25;
-        result->total_price[i] += (SpotPriceDKK[i] + result->total_tax[i]) * VAT_CONST;
+        result->VAT[i] += (SpotPriceDKK[i] + result->total_tax[i+current_hour]) * 0.25; //The spot prices are already given in current hour
+        result->total_price[i] += (SpotPriceDKK[i] + result->total_tax[i+current_hour]) * VAT_CONST;
     }
 }
 
@@ -458,4 +466,3 @@ void print_prices(double *SpotPriceDKK, total_prices *result)
         }
     }
 }
-
