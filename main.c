@@ -440,8 +440,8 @@ void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *re
         result->total_tax[i] += price_data->system_tariff;
         result->total_tax[i] += price_data->balance_tariff;
         result->total_tax[i] += price_data->electricity_tax;
-        result->VAT[i] += (SpotPriceDKK[i] + result->total_tax[i+current_hour]) * 0.25; //The spot prices are already given in current hour
-        result->total_price[i] += (SpotPriceDKK[i] + result->total_tax[i+current_hour]) * VAT_CONST;
+        result->VAT[i] += (SpotPriceDKK[i] + result->total_tax[i]) * 0.25; //The spot prices are already given in current hour
+        result->total_price[i] += (SpotPriceDKK[i] + result->total_tax[i]) * VAT_CONST;
     }
 }
 
