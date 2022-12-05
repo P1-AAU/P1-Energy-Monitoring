@@ -57,15 +57,12 @@ void print_prices(double *SpotPriceDKK, total_prices *result);
 
 int main()
 {
-    FILE source;
-    device *devices;
     prices *price_data;
     total_prices *result;
     char answer;
     char answer1;
-    double SpotPricesDKK[24];
+    double SpotPricesDKK[48];
 
-    devices = malloc(8 * sizeof(device));
     price_data = malloc(sizeof(prices));
     result = malloc(sizeof(total_prices));
 
@@ -86,54 +83,7 @@ int main()
     total_price_calc(SpotPricesDKK, price_data, result);
     print_prices(SpotPricesDKK,result);
 
-    /* fill_device(&source, devices);
-    print_devices(devices); */
-
-    free(devices);
-    free(price_data);
-    free(result);
     return 0;
-}
-
-void fill_device(FILE *source, device *devices) {
-    source = fopen("../device.txt", "r");
-
-    if (source == NULL) {
-        printf("Error the file does not exist");
-        exit(1);
-    }
-
-    char line[100];
-
-    for (int i = 0; i < 8; i++) {
-        fgets(line, sizeof(line), source);
-
-        sscanf(line, "%[A-Za-z_^], %lf, %lf",
-               devices[i].name, &devices[i].standby_watt,
-               &devices[i].running_watt);
-
-        printf("Insert amounts for %s > ", devices[i].name);
-        scanf("%d", &devices[i].amounts);
-    }
-
-    fclose(source);
-}
-
-void print_devices(device *devices) {
-    for (int i = 0; i < 8; i++) {
-        printf("%s, %.2lf, %.2lf, %d\n", devices[i].name, devices[i].standby_watt,
-               devices[i].running_watt, devices[i].amounts);
-    }
-}
-
-size_t save_api_result(char *ptr, size_t size, size_t nmemb, void *not_used) {
-    FILE *file;
-    file = fopen("../accessToken.json", "w"); // w stands for write, it replaces the old data with the new
-    fprintf(file, "%s", ptr);
-    fclose(file);
-
-    // returns the size of bytes to check if any dataloss has occured
-    return size * nmemb;
 }
 
 void get_api_fees(char answer) {
@@ -323,14 +273,12 @@ void readPrices_spotPrice(double *SpotPriceDKK) {
         spotPrices_temp = json_object_array_get_idx(records, i);
         json_object_object_get_ex(spotPrices_temp, "SpotPriceDKK", &spotPrice_temp);
         SpotPriceDKK[i] = json_object_get_double(spotPrice_temp)/1000; //Divide by 1000 to get price in DKK
-        printf("%lu, %lf\n", i + 1, SpotPriceDKK[i]);
     }
     json_object_put(parsed_json); //Frees json-object from memory
 }
 
 void readPrices_tariffs(prices *price_data) {
     FILE *tariffs_file; //Opens the tariffs file
-    FILE *output; //Opens the file with personal Tariffs
     char buffer[6000];
 
     // Here we get the access token from the json file
@@ -397,12 +345,10 @@ void readPrices_tariffs(prices *price_data) {
         tariffPrices_temp = json_object_array_get_idx(tariff_prices, i);
         json_object_object_get_ex(tariffPrices_temp, "price", &tariffPrice_temp);
         price_data->net_tariff[i] = json_object_get_double(tariffPrice_temp);
-        printf("%lu, %lf\n", i + 1, price_data->net_tariff[i]);
 
         tariffDiscounts_temp = json_object_array_get_idx(tariff_discount, i);
         json_object_object_get_ex(tariffDiscounts_temp, "price", &tariffDiscount_temp);
         price_data->net_tariff_discount[i] = json_object_get_double(tariffDiscount_temp);
-        printf("%lu, %lf\n", i + 1, price_data->net_tariff_discount[i]);
     }
 
     json_object_object_get_ex(json_object_array_get_idx(net_tariff_transmission_array, 0), "price",
@@ -416,21 +362,11 @@ void readPrices_tariffs(prices *price_data) {
     price_data->balance_tariff = json_object_get_double(balance_tariff_price);
     price_data->electricity_tax = json_object_get_double(electricity_tax_price);
 
-    printf("NetTariff %lf\n", price_data->net_tariff_transmission);
-    printf("SystemTariff %lf\n", price_data->system_tariff);
-    printf("BalanceTariff %lf\n", price_data->balance_tariff);
-    printf("Electricity Tax %lf\n", price_data->electricity_tax);
-
     json_object_put(parsed_json); //Frees json-object from memory
 }
 
 void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *result)
 {
-    time_t rawtime;
-    struct tm * timeinfo;
-    time( &rawtime );
-    timeinfo = localtime( &rawtime );
-    int current_hour = timeinfo->tm_hour;
 
     for (int i = 0; i < HOURS_IN_DAY; i++)
     {
@@ -456,7 +392,7 @@ void print_prices(double *SpotPriceDKK, total_prices *result)
     printf("Hour \t Total-Price \t Spot-Price \t Tax-Total \t VAT \n");
     for(int i = 0; i < HOURS_IN_DAY; i++)
     {
-        printf("%02d:00 \t %8lf \t %12lf \t %12lf \t %6lf \n",current_hour, result->total_price[i], SpotPriceDKK[i], result->total_tax[i], result->VAT[i]);
+        printf("%02d:00 %12lf %15lf %15lf %10lf\n",current_hour, result->total_price[i], SpotPriceDKK[i], result->total_tax[i], result->VAT[i]);
         if(current_hour==23)
         {
             current_hour = 0;
