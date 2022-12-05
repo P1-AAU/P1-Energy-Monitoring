@@ -52,8 +52,6 @@ size_t save_api_result(char *ptr, size_t size, size_t nmemb, void *not_used)
     meter_child = json_object_array_get_idx(meter_parent, 0);
     json_object_object_get_ex(meter_child, "meteringPointId", &meter_point_id);
 
-    char *data = "{\"meteringPoints\":{\"meteringPoint\" : [\"571313105202878672\"]}}";
-
     json_object *new_meter_parent = json_object_new_object();
     json_object *new_meter_child = json_object_new_object();
     json_object *new_meter_child_array = json_object_new_array();
@@ -179,7 +177,6 @@ void get_api_fees(char answer)
     curl = curl_easy_init();
     if (curl)
     {
-        char *data = "{\"meteringPoints\":{\"meteringPoint\" : [\"571313105202878672\"]}}";
 
         metering_points = fopen("../meter.json", "r");
         char meter_buffer[1000];
