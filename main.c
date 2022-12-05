@@ -19,8 +19,8 @@ struct MemoryStruct
 
 // prototypes
 void get_api_token(char answer, char *access_token_string);
-void get_metering_point(char answer, char *access_token_string);
-void get_api_fees(char answer, char *access_token_string);
+void get_metering_point(char answer, char *access_token_string, char *meter_id);
+void get_tarrifs(char answer, char *acces_token_string, char *meter_id);
 void get_api_spot_prices();
 
 int main()
@@ -30,13 +30,14 @@ int main()
     char answer1;
 
     char access_token_string[BUFFER_SIZE];
+    char meter_id[METER_SIZE];
 
     printf("Do you want a new access token? y/n: ");
     scanf("%c", &answer);
 
     get_api_token(answer, access_token_string);
-    get_metering_point(answer, access_token_string);
-    // get_api_fees(answer, access_token_string);
+    get_metering_point(answer, access_token_string, meter_id);
+    get_tarrifs(answer, access_token_string, meter_id);
 
     printf("Do you want spot prices? y/n: ");
     scanf(" %c", &answer1);
@@ -153,46 +154,8 @@ void get_api_token(char answer, char *access_token_string)
     curl_global_cleanup();
 }
 
-size_t save_meter_result(char *ptr, size_t size, size_t nmemb, void *not_used)
+void get_metering_point(char answer, char *access_token_string, char *meter_id)
 {
-    FILE *file;
-
-    json_object *parsed_json;
-    json_object *meter_parent;
-    json_object *meter_child;
-    json_object *meter_point_id;
-
-    parsed_json = json_tokener_parse(ptr);
-    json_object_object_get_ex(parsed_json, "result", &meter_parent);
-    meter_child = json_object_array_get_idx(meter_parent, 0);
-    json_object_object_get_ex(meter_child, "meteringPointId", &meter_point_id);
-
-    json_object *new_meter_parent = json_object_new_object();
-    json_object *new_meter_child = json_object_new_object();
-    json_object *new_meter_child_array = json_object_new_array();
-
-    json_object_array_add(new_meter_child_array, json_object_get(meter_point_id));
-    json_object_object_add(new_meter_child, "meteringPoint", new_meter_child_array);
-    json_object_object_add(new_meter_parent, "meteringPoints", new_meter_child);
-
-    file = fopen("../meter.json", "w"); // w stands for write, it replaces the old data with the new
-    fprintf(file, "%s", json_object_get_string(new_meter_parent));
-    fclose(file);
-
-    json_object_put(new_meter_parent);
-    json_object_put(parsed_json);
-
-    // returns the size of bytes to check if any dataloss has occured
-    return size * nmemb;
-}
-
-void get_metering_point(char answer, char *access_token_string)
-{
-    FILE *access_token_file;
-    char buffer[BUFFER_SIZE];
-
-    json_object *parsed_json;
-    json_object *access_token;
 
     CURL *curl;
     CURLcode res;
@@ -200,12 +163,26 @@ void get_metering_point(char answer, char *access_token_string)
 
     struct curl_slist *headers = NULL;
 
+    struct MemoryStruct chunk;
+
+    FILE *access_token_file;
+
+    chunk.memory = malloc(1); /* will be grown as needed by the realloc above */
+    chunk.size = 0;           /* no data at this point */
+
     if (answer == 'y')
     {
         headers = curl_slist_append(headers, access_token_string);
     }
     else
     {
+        FILE *access_token_file;
+
+        char buffer[BUFFER_SIZE];
+
+        json_object *parsed_json;
+        json_object *access_token;
+
         access_token_file = fopen("../accessToken.json", "r");
         fread(buffer, BUFFER_SIZE, 1, access_token_file);
         fclose(access_token_file);
@@ -223,109 +200,123 @@ void get_metering_point(char answer, char *access_token_string)
     {
         curl_easy_setopt(curl, CURLOPT_URL, "https://api.eloverblik.dk/customerapi/api/meteringpoints/meteringpoints?includeAll=false");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, save_meter_result);
+        // curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, save_meter_result);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback); // this is saved into the WriteMemoryCallback function as a *ptr
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
         res = curl_easy_perform(curl);
 
         if (res != CURLE_OK)
         {
             printf("curl_easy_perform() returned %s\n", curl_easy_strerror(res));
         }
-        curl_easy_cleanup(curl);
+        else
+        {
+            FILE *file;
+
+            json_object *parsed_json;
+            json_object *meter_parent;
+            json_object *meter_child;
+            json_object *meter_point_id;
+
+            parsed_json = json_tokener_parse(chunk.memory);
+            json_object_object_get_ex(parsed_json, "result", &meter_parent);
+            meter_child = json_object_array_get_idx(meter_parent, 0);
+            json_object_object_get_ex(meter_child, "meteringPointId", &meter_point_id);
+
+            json_object *new_meter_parent = json_object_new_object();
+            json_object *new_meter_child = json_object_new_object();
+            json_object *new_meter_child_array = json_object_new_array();
+
+            json_object_array_add(new_meter_child_array, json_object_get(meter_point_id));
+            json_object_object_add(new_meter_child, "meteringPoint", new_meter_child_array);
+            json_object_object_add(new_meter_parent, "meteringPoints", new_meter_child);
+
+            file = fopen("../meter.json", "w"); // w stands for write, it replaces the old data with the new
+            fprintf(file, "%s", json_object_get_string(new_meter_parent));
+            fclose(file);
+
+            strcpy(meter_id, json_object_get_string(new_meter_parent));
+
+            json_object_put(new_meter_parent);
+            json_object_put(parsed_json);
+
+            curl_easy_cleanup(curl);
+        }
     }
 
     curl_global_cleanup();
 }
 
-/* void get_api_fees(char answer, char *access_token_string)
+void get_tarrifs(char answer, char *access_token_string, char *meter_id)
 {
+    CURL *curl;
+    CURLcode res;
+    curl_global_init(CURL_GLOBAL_ALL);
 
-    // Here we get the access token from the json file
-    access_token_file = fopen("../accessToken.json", "r");
-    fread(buffer, 5000, 1, access_token_file);
-    fclose(access_token_file);
-
-    parsed_json = json_tokener_parse(buffer);
-    json_object_object_get_ex(parsed_json, "result", &access_token);
-
-    const char *access_token_string = json_object_get_string(access_token);
-
-    char buf[json_object_get_string_len(access_token)];
-
-    strcpy(buf, access_token_string);
-
-    char header_string[json_object_get_string_len(access_token) + 23];
-    strcpy(header_string, "Authorization: Bearer ");
-
-    strcat(header_string, buf);
-
-    headers = curl_slist_append(headers, header_string);
+    struct curl_slist *headers = NULL;
 
     curl = curl_easy_init();
     if (curl)
     {
-        curl_easy_setopt(curl, CURLOPT_URL, "https://api.eloverblik.dk/customerapi/api/meteringpoints/meteringpoints?includeAll=false");
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        // curl_easy_setopt(curl, CURLOPT_WRITEDATA, metering_points);
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, save_api_result);
-        res = curl_easy_perform(curl);
-
-        if (res != CURLE_OK)
-        {
-            printf("curl_easy_perform() returned %s\n", curl_easy_strerror(res));
-        }
-        curl_easy_cleanup(curl);
-    }
-
-    // Here we get the access token from the json file
-    access_token_file = fopen("../accessToken.json", "r");
-    fread(buffer, 5000, 1, access_token_file);
-    fclose(access_token_file);
-
-    parsed_json = json_tokener_parse(buffer);
-    json_object_object_get_ex(parsed_json, "result", &access_token);
-
-    const char *access_token_string = json_object_get_string(access_token);
-
-    char buf[json_object_get_string_len(access_token)];
-
-    strcpy(buf, access_token_string);
-
-    char header_string[json_object_get_string_len(access_token) + 23];
-    strcpy(header_string, "Authorization: Bearer ");
-
-    strcat(header_string, buf);
-
-    headers = curl_slist_append(headers, header_string);
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-
-    curl = curl_easy_init();
-    if (curl)
-    {
-
-        metering_points = fopen("../meter.json", "r");
-        char meter_buffer[1000];
-        fread(meter_buffer, 1000, 1, metering_points);
-        fclose(metering_points);
-
-        json_object *parsed_meter = json_tokener_parse(meter_buffer);
-
-        prices = fopen("../output.json", "w");
+        FILE *tarrif_file;
+        tarrif_file = fopen("../tarrifs.json", "w");
         curl_easy_setopt(curl, CURLOPT_URL, "https://api.eloverblik.dk/customerapi/api/meteringpoints/meteringpoint/getcharges");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_object_get_string(parsed_meter));
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, prices);
+        
+        if (answer == 'y')
+        {
+            headers = curl_slist_append(headers, access_token_string);
+            headers = curl_slist_append(headers, "Content-Type: application/json");
+
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, meter_id);
+        }
+        else
+        {
+            FILE *access_token_file;
+            FILE *metering_point_file;
+
+            char buffer[BUFFER_SIZE];
+            char meter_buffer[METER_SIZE];
+
+            json_object *parsed_json;
+            json_object *access_token;
+            json_object *parsed_meter;
+
+            access_token_file = fopen("../accessToken.json", "r");
+            fread(buffer, BUFFER_SIZE, 1, access_token_file);
+            fclose(access_token_file);
+
+            parsed_json = json_tokener_parse(buffer);
+            json_object_object_get_ex(parsed_json, "result", &access_token);
+
+            headers = curl_slist_append(headers, json_object_get_string(access_token));
+            headers = curl_slist_append(headers, "Content-Type: application/json");
+
+            metering_point_file = fopen("../meter.json", "r");
+            fread(meter_buffer, METER_SIZE, 1, metering_point_file);
+            fclose(metering_point_file);
+
+            parsed_meter = json_tokener_parse(meter_buffer);
+
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_object_get_string(parsed_meter));
+
+            json_object_put(parsed_json);
+            json_object_put(parsed_meter);
+        }
+
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, tarrif_file);
         res = curl_easy_perform(curl);
 
         if (res != CURLE_OK)
         {
             printf("curl_easy_perform() returned %s\n", curl_easy_strerror(res));
         }
-        fclose(prices);
+        fclose(tarrif_file);
         curl_easy_cleanup(curl);
     }
 
     curl_global_cleanup();
-} */
+}
 
 void get_api_spot_prices()
 {
