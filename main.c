@@ -12,15 +12,14 @@
 #define BUFFER_SIZE 5000
 #define METER_SIZE 100
 
-#define REFRESH_TOKEN "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlblR5cGUiOiJDdXN0b21lckFQSV9SZWZyZXNoIiwidG9rZW5pZCI6ImJhMTE2NzQ4LTI4ZGYtNDkwYi04YjI1LTc1Mzk4MWExMGM5YSIsIndlYkFwcCI6WyJDdXN0b21lckFwaSIsIkN1c3RvbWVyQXBwQXBpIl0sInZlcnNpb24iOiIyIiwiaWRlbnRpdHlUb2tlbiI6IlNsN09KdDdYU3VGaDhoL081c3Fza3BCNk1jN0VxQWxqMUloNmFoTGlqbWx6bFdGdkg5cjM3SnJvWHJjMlN5R0VpOXdKejJ2clpzUm1iZHJkcy95MVRTRloxZXRuMXNldURnL09wM1VSQmRONUx4MDdGTGpDSDQyeXlhU3oxaDdKcGw0Uk9sODZ1TEEzaXB5cDRWWGtmOFlOcmdTdU9wOHJCUm1SRnlWZjBuQTVWdnlOZnFzTklSM1g0czFzQWdkOWJyZVkxS3ZoYVpDVWZrTzIzVkorcnViTXlybHp6ekJYQy9zb3dSNndQWWUzekZ1Qmhkclk4L001eDEyTGNmR2hQeFBLd1FyMk1ZRWk0M21KTnMyOUZaL0Y5U0lMMS9udHFQTnhkV1pzdm5FSjJKVTVpTmRnbmhoMG1YSkdKSFp0SjdoUU9kUUZtR3FWZnFQMVNFWjcxbUU5MkxzTG95eklyMFAzeVBEYW5IM0ZSMysrRk5KT3A0ZzZhZTlpWHN4MUljUFo5dFRuQzJZNkgyeHpvNysvQlZYL2dISGF3ZkVaVk5QandPRExiSDdJL20vMU9kZmNHN29FcTRHZitYeHdUcjQ4VWl0N3crTk5LTWxydCtESGRaMHZjU0tSQ2FaTncxVUVnNExMTU9QQlJqR3k4Mk95U3ozVEZTZGhzWURkR2JxMmRlRHhhWjJDTkFSRG5qWE53bVpmak9QMG03ZWk4dXBOV0wraWRjbGkzVVhFTkVaMWVISWIvbE16VGMzSmkyc01DK0xSdk1YR05rR244emxDOHNTa2h6MmMvY0sxbExGK0ZVaTkwaFBKWW8rVkhvRzhsZzJHa3l6OU5naDhaNGx2cXdEMEJhbndmTnMvZlVaVlFjc2Y5VHJWYmRRQ0pIVjk3bENjWExPMFVzdS9jQjdqQm02aTlpZ1E3Tmp3b3RyV21jY0VPbE9ubjVDTG52VjZhTGdjMkZzRjk4WlRidzhVTjJicFk4OWEvM05rZFpCUEJHeWtvU0xCNmtrWTkybk9kajJPdVdaSzVITExhU2ovdHJzMjdYaTNEWVp2Y1RmbG1WWFJrQWJ0QnVDeTd5T1E2YXVtNUFvdmF0VEdrNlQ0NHl3V2wxKzU2ZVF1QzF3aXhRZkRhTzlTSmhtVnoxOWxaOWZnM3BJV3BFakgvczEvc1dzcXdaS001QU9SUkxyQTFDOEZNTnh3OFlRZmpVRFAxWWxFM2VzYWJyTnBDT1dUeUVlNjNra0U0YzlZRi9hQTFIb1ljekVZNzJqNkF1akE2SnRVR0lQcENUMmZSOEQ4eTNhMjF1T3MxMmJPVEtaeGU3SHNQTkZkOTZ5RlNWYXRqRE1rYzZOaTZSY0VEOWp0K1RLSmZuZWtXK1FiZ1ZTZmdaRWQ4NW85ZXIwR09HRklYQXcvTU81Tjh5MGZqRzQ4cjJwamhlcnlEUVR4NkowbUVGSXVMVEU0Qlk5Y1dBbUwyL25RMUhJSUJhUGIyM2R3KzF6NjhrdmkzWEs2M0JiRmJnYzIrN1JxWXpWWFpvK1ZQTzMzR3RpTHBXUDZ2THRvNmFydU1wMG9KWTZDMnc2YnowK3pUTkV4TmZPNk9INFNqcE1XTC9kSElQeWQrZGtDRkJ0dkpYeTN3eHhhamR3U2V2Y1hZWXdURTJDTStyMmR5VFFVUW5uNk5QN0IvNTNtOWRjMGpObW1HdFBQWlQrVi9kdEVuNWVUaGVJcUQwWDJseXJBbHJqc2prVXFzOERGcWJ5RUV4Y1lsWTJGd1RFampHdmdLSUk0N0dpNjlpTWIwMWZ4cDZuQ3hiZnh4V2lHc1k0MnlWWnFmR29RY1ZVV3hkN1U4TWpVNkh0QTh2bTAxUE5yRnVzTVhnd2I0aEw1M2lCWTdsQmlKZGxGM2dRSnVyTmNWVDRVMXp0RlBJWG91WlVNZHpqMkpPbVE5WmRHRmdLbE5YelNsVGM0Q0VBMHlyaDk2eFNqY25wSXZmaE0xV0x2QW13VTN5a29ScU1ia2lBdCtjS0JZdnFHaGhranIvRXplMWRCYjNkblR1NUNPdE1GeFBvMVozcEV1bWg1bTlUL3c0Ni9lRDhMamE1azVTczNrekFBUWZFdmVidnB1L0NPU01FWXRUTXpTeGpINitVSXZhZHlpZUVlTWlOUy80OGdPZTB4K0ZEVHlXVURzMysvU09iUXU5ckhkMkVWSm5UNFNiOTlneVQvUGg2UFRsTDQ3cWxwVEVwYXlxb01HTkV6anhyZWNsZHpRNUNQbXEzSDlaY2VnSllVdTJQTm9FOEhvYSt3MWJpck91R0FMYnVia2lCSVlxQS8ydGFSMllIaTRHSGt2M1VBSGpNQWpnYUdaMVFXb2Z5L3JXQ25HVjE4ZGRzb0w1a1ZYQUxYZ2xnOXZQTWFQN2JmY1gyb0g5bFZkK0hvbUUyak1DanBFNGh3R0paK1pmMHFMTXNUam5aSUZwdU9NL0N1U3BxWTNOcEp3UExOaytCRkROTGFncVVDbnJXYUhqNFpURVN1ekVpL25GZVRDaVd6eHVHMUxweHNaOVA4UThCWCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiUElEOjkyMDgtMjAwMi0yLTMzODA3NDY3NjM3MSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2dpdmVubmFtZSI6IkFkb21hcyBDaXBseXMiLCJsb2dpblR5cGUiOiJLZXlDYXJkIiwicGlkIjoiOTIwOC0yMDAyLTItMzM4MDc0Njc2MzcxIiwiYjNmIjoiL0pBYXZoT3lzU0ZjWVBqM0ZIK1RUUHovbmc3WG84NGZHZ3B3MlhLdGZJRT0iLCJ1c2VySWQiOiI1NjgxMzEiLCJleHAiOjE3MDE1MTI2NTgsImlzcyI6IkVuZXJnaW5ldCIsImp0aSI6ImJhMTE2NzQ4LTI4ZGYtNDkwYi04YjI1LTc1Mzk4MWExMGM5YSIsInRva2VuTmFtZSI6IlByb2pla3QiLCJhdWQiOiJFbmVyZ2luZXQifQ.67x-rcNmBqTJOn4U37skMcsX5KfkfbNfu2Kt765Id5c"
-
 struct MemoryStruct
 {
     char *memory;
     size_t size;
 };
 
-typedef struct {
+typedef struct
+{
     double net_tariff[24];
     double net_tariff_discount[24];
     double net_tariff_transmission;
@@ -29,7 +28,8 @@ typedef struct {
     double electricity_tax;
 } prices;
 
-typedef struct {
+typedef struct
+{
     double total_price[24];
     double total_tax[24];
     double VAT[24];
@@ -45,13 +45,13 @@ void readPrices_tariffs(prices *price_data);
 void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *result);
 void print_prices(double *SpotPriceDKK, total_prices *result);
 
-
 int main()
 {
     prices *price_data;
     total_prices *result;
-    char answer;
-    char answer1;
+    char answer_refresh;
+    char answer_access;
+    char answer_spot;
     double SpotPricesDKK[48];
 
     char access_token_string[BUFFER_SIZE];
@@ -60,23 +60,24 @@ int main()
     result = malloc(sizeof(total_prices));
 
     printf("Do you want a new access token? y/n: ");
-    scanf("%c", &answer);
+    scanf("%c", &answer_access);
 
-    get_api_token(answer, access_token_string);
-    get_metering_point(answer, access_token_string, meter_id);
-    get_tarrifs(answer, access_token_string, meter_id);
+    get_api_token(answer_access, access_token_string);
+    get_metering_point(answer_access, access_token_string, meter_id);
+    get_tarrifs(answer_access, access_token_string, meter_id);
 
     printf("Do you want spot prices? y/n: ");
-    scanf(" %c", &answer1);
+    scanf(" %c", &answer_spot);
 
-    if (answer1 == 'y') {
+    if (answer_spot == 'y')
+    {
         get_api_spot_prices();
     }
 
     readPrices_spotPrice(SpotPricesDKK);
     readPrices_tariffs(price_data);
     total_price_calc(SpotPricesDKK, price_data, result);
-    print_prices(SpotPricesDKK,result);
+    print_prices(SpotPricesDKK, result);
 
     return 0;
 }
@@ -110,73 +111,80 @@ void get_api_token(char answer, char *access_token_string)
 
     struct curl_slist *headers = NULL;
 
+    json_object *parsed_refresh_token;
+    json_object *refresh_token;
     json_object *parsed_json;
     json_object *access_token;
     json_object *new_json;
 
     const char *access_token_str;
-
     char buffer[BUFFER_SIZE];
 
     struct MemoryStruct chunk;
 
+    FILE *refresh_token_file;
     FILE *access_token_file;
 
     chunk.memory = malloc(1); /* will be grown as needed by the realloc above */
     chunk.size = 0;           /* no data at this point */
 
-    if (answer == 'y')
+    refresh_token_file = fopen("../refreshToken.json", "r");
+
+    fread(buffer, BUFFER_SIZE, 1, refresh_token_file);
+
+    parsed_refresh_token = json_tokener_parse(buffer);
+    refresh_token = json_object_object_get(parsed_refresh_token, "token");
+
+    headers = curl_slist_append(headers, json_object_get_string(refresh_token));
+
+    curl = curl_easy_init();
+    if (curl)
     {
+        curl_easy_setopt(curl, CURLOPT_URL, "https://api.eloverblik.dk/customerapi/api/token");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback); // this is saved into the WriteMemoryCallback function as a *ptr
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
+        res = curl_easy_perform(curl);
 
-        headers = curl_slist_append(headers, "Authorization: Bearer " REFRESH_TOKEN);
-
-        curl = curl_easy_init();
-        if (curl)
+        if (res != CURLE_OK)
         {
-            curl_easy_setopt(curl, CURLOPT_URL, "https://api.eloverblik.dk/customerapi/api/token");
-            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback); // this is saved into the WriteMemoryCallback function as a *ptr
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
-            res = curl_easy_perform(curl);
+            printf("curl_easy_perform() returned %s\n", curl_easy_strerror(res));
+        }
+        else
+        {
 
-            if (res != CURLE_OK)
-            {
-                printf("curl_easy_perform() returned %s\n", curl_easy_strerror(res));
-            }
-            else
-            {
+            parsed_json = json_tokener_parse(chunk.memory);
+            json_object_object_get_ex(parsed_json, "result", &access_token);
 
-                parsed_json = json_tokener_parse(chunk.memory);
-                json_object_object_get_ex(parsed_json, "result", &access_token);
+            access_token_str = json_object_get_string(access_token);
 
-                access_token_str = json_object_get_string(access_token);
+            char buf[json_object_get_string_len(access_token)];
 
-                char buf[json_object_get_string_len(access_token)];
+            strcpy(buf, access_token_str);
 
-                strcpy(buf, access_token_str);
+            char header_string[json_object_get_string_len(access_token) + 23];
+            strcpy(header_string, "Authorization: Bearer ");
 
-                char header_string[json_object_get_string_len(access_token) + 23];
-                strcpy(header_string, "Authorization: Bearer ");
+            strcat(header_string, buf);
 
-                strcat(header_string, buf);
+            strcpy(access_token_string, header_string);
 
-                strcpy(access_token_string, header_string);
+            new_json = json_object_new_object();
+            json_object_object_add(new_json, "result", json_object_new_string(header_string));
 
-                new_json = json_object_new_object();
-                json_object_object_add(new_json, "result", json_object_new_string(header_string));
-
-                access_token_file = fopen("../accessToken.json", "w");
-                fprintf(access_token_file, "%s", json_object_get_string(new_json));
-                fclose(access_token_file);
-            }
-
-            curl_easy_cleanup(curl);
+            access_token_file = fopen("../accessToken.json", "w");
+            fprintf(access_token_file, "%s", json_object_get_string(new_json));
+            fclose(access_token_file);
         }
 
-        json_object_put(new_json);
-        json_object_put(parsed_json);
-        free(chunk.memory);
+        curl_easy_cleanup(curl);
     }
+
+    fclose(refresh_token_file);
+    json_object_put(parsed_refresh_token);
+    json_object_put(new_json);
+    json_object_put(parsed_json);
+    free(chunk.memory);
 
     curl_global_cleanup();
 }
@@ -369,14 +377,16 @@ void get_api_spot_prices()
     headers = curl_slist_append(headers, "Content-Type: application/json");
 
     curl = curl_easy_init();
-    if (curl) {
+    if (curl)
+    {
         curl_easy_setopt(curl, CURLOPT_URL,
                          "https://api.energidataservice.dk/dataset/Elspotprices?start=now-P0DT1H&sort=HourDK&columns=HourDK,SpotPriceDKK&filter={%22PriceArea%22:[%22DK1%22]}");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, spot_prices_file);
         res = curl_easy_perform(curl);
 
-        if (res != CURLE_OK) {
+        if (res != CURLE_OK)
+        {
             printf("curl_easy_perform() returned %s\n", curl_easy_strerror(res));
         }
 
@@ -387,8 +397,9 @@ void get_api_spot_prices()
     curl_global_cleanup();
 }
 
-void readPrices_spotPrice(double *SpotPriceDKK) {
-    FILE *spotPrices_file; //Opens the spotPrices file
+void readPrices_spotPrice(double *SpotPriceDKK)
+{
+    FILE *spotPrices_file; // Opens the spotPrices file
     char buffer[6000];
 
     // Here we get the access token from the json file
@@ -410,18 +421,20 @@ void readPrices_spotPrice(double *SpotPriceDKK) {
 
     putchar('\n');
 
-    for (i = 0; i < n_prices; i++) {
+    for (i = 0; i < n_prices; i++)
+    {
         json_object *spotPrices_temp;
         json_object *spotPrice_temp;
         spotPrices_temp = json_object_array_get_idx(records, i);
         json_object_object_get_ex(spotPrices_temp, "SpotPriceDKK", &spotPrice_temp);
-        SpotPriceDKK[i] = json_object_get_double(spotPrice_temp)/1000; //Divide by 1000 to get price in DKK
+        SpotPriceDKK[i] = json_object_get_double(spotPrice_temp) / 1000; // Divide by 1000 to get price in DKK
     }
-    json_object_put(parsed_json); //Frees json-object from memory
+    json_object_put(parsed_json); // Frees json-object from memory
 }
 
-void readPrices_tariffs(prices *price_data) {
-    FILE *tariffs_file; //Opens the tariffs file
+void readPrices_tariffs(prices *price_data)
+{
+    FILE *tariffs_file; // Opens the tariffs file
     char buffer[6000];
 
     // Here we get the access token from the json file
@@ -479,8 +492,9 @@ void readPrices_tariffs(prices *price_data) {
     printf("Found %lu tariff prices", n_prices);
     putchar('\n');
 
-    //Here we get the actual prices
-    for (i = 0; i < n_prices; i++) {
+    // Here we get the actual prices
+    for (i = 0; i < n_prices; i++)
+    {
         json_object *tariffPrices_temp;
         json_object *tariffPrice_temp;
         json_object *tariffDiscounts_temp;
@@ -505,36 +519,37 @@ void readPrices_tariffs(prices *price_data) {
     price_data->balance_tariff = json_object_get_double(balance_tariff_price);
     price_data->electricity_tax = json_object_get_double(electricity_tax_price);
 
-    json_object_put(parsed_json); //Frees json-object from memory
+    json_object_put(parsed_json); // Frees json-object from memory
 }
 
 void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *result)
 {
     time_t rawtime;
-    struct tm * timeinfo;
-    time( &rawtime );
-    timeinfo = localtime( &rawtime );
+    struct tm *timeinfo;
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
     int current_hour = timeinfo->tm_hour;
 
     for (int i = 0; i < HOURS_IN_DAY; i++)
     {
         result->total_tax[i] += price_data->net_tariff[i];
-        result->total_tax[i] += price_data->net_tariff_discount[i]; //The value is already negative
+        result->total_tax[i] += price_data->net_tariff_discount[i]; // The value is already negative
         result->total_tax[i] += price_data->net_tariff_transmission;
         result->total_tax[i] += price_data->system_tariff;
         result->total_tax[i] += price_data->balance_tariff;
         result->total_tax[i] += price_data->electricity_tax;
     }
 
-    for(int i = 0; i < HOURS_IN_DAY; i++)
+    for (int i = 0; i < HOURS_IN_DAY; i++)
     {
-        result->VAT[i] += (SpotPriceDKK[i] + result->total_tax[i]) * 0.25; //The spot prices are already given in current hour
+        result->VAT[i] += (SpotPriceDKK[i] + result->total_tax[i]) * 0.25; // The spot prices are already given in current hour
         result->total_price[i] += (SpotPriceDKK[i] + result->total_tax[current_hour]) * VAT_CONST;
 
-        if(current_hour==23)
+        if (current_hour == 23)
         {
             current_hour = 0;
-        }else
+        }
+        else
         {
             current_hour++;
         }
@@ -544,19 +559,20 @@ void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *re
 void print_prices(double *SpotPriceDKK, total_prices *result)
 {
     time_t rawtime;
-    struct tm * timeinfo;
-    time( &rawtime );
-    timeinfo = localtime( &rawtime );
+    struct tm *timeinfo;
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
     int current_hour = timeinfo->tm_hour;
 
     printf("Hour \t Total-Price \t Spot-Price \t Tax-Total \t VAT \n");
-    for(int i = 0; i < HOURS_IN_DAY; i++)
+    for (int i = 0; i < HOURS_IN_DAY; i++)
     {
-        printf("%02d:00 %12lf %15lf %15lf %10lf\n",current_hour, result->total_price[i], SpotPriceDKK[i], result->total_tax[i], result->VAT[i]);
-        if(current_hour==23)
+        printf("%02d:00 %12lf %15lf %15lf %10lf\n", current_hour, result->total_price[i], SpotPriceDKK[i], result->total_tax[i], result->VAT[i]);
+        if (current_hour == 23)
         {
             current_hour = 0;
-        }else
+        }
+        else
         {
             current_hour++;
         }
