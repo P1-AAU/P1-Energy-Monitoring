@@ -10,17 +10,15 @@
 #define HOURS_IN_DAY 24
 #define VAT_CONST 1.25
 #define BUFFER_SIZE 5000
-#define METERINGPOINT_LENGTH 18
+#define METER_SIZE 100
 
 #define REFRESH_TOKEN "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlblR5cGUiOiJDdXN0b21lckFQSV9SZWZyZXNoIiwidG9rZW5pZCI6ImJhMTE2NzQ4LTI4ZGYtNDkwYi04YjI1LTc1Mzk4MWExMGM5YSIsIndlYkFwcCI6WyJDdXN0b21lckFwaSIsIkN1c3RvbWVyQXBwQXBpIl0sInZlcnNpb24iOiIyIiwiaWRlbnRpdHlUb2tlbiI6IlNsN09KdDdYU3VGaDhoL081c3Fza3BCNk1jN0VxQWxqMUloNmFoTGlqbWx6bFdGdkg5cjM3SnJvWHJjMlN5R0VpOXdKejJ2clpzUm1iZHJkcy95MVRTRloxZXRuMXNldURnL09wM1VSQmRONUx4MDdGTGpDSDQyeXlhU3oxaDdKcGw0Uk9sODZ1TEEzaXB5cDRWWGtmOFlOcmdTdU9wOHJCUm1SRnlWZjBuQTVWdnlOZnFzTklSM1g0czFzQWdkOWJyZVkxS3ZoYVpDVWZrTzIzVkorcnViTXlybHp6ekJYQy9zb3dSNndQWWUzekZ1Qmhkclk4L001eDEyTGNmR2hQeFBLd1FyMk1ZRWk0M21KTnMyOUZaL0Y5U0lMMS9udHFQTnhkV1pzdm5FSjJKVTVpTmRnbmhoMG1YSkdKSFp0SjdoUU9kUUZtR3FWZnFQMVNFWjcxbUU5MkxzTG95eklyMFAzeVBEYW5IM0ZSMysrRk5KT3A0ZzZhZTlpWHN4MUljUFo5dFRuQzJZNkgyeHpvNysvQlZYL2dISGF3ZkVaVk5QandPRExiSDdJL20vMU9kZmNHN29FcTRHZitYeHdUcjQ4VWl0N3crTk5LTWxydCtESGRaMHZjU0tSQ2FaTncxVUVnNExMTU9QQlJqR3k4Mk95U3ozVEZTZGhzWURkR2JxMmRlRHhhWjJDTkFSRG5qWE53bVpmak9QMG03ZWk4dXBOV0wraWRjbGkzVVhFTkVaMWVISWIvbE16VGMzSmkyc01DK0xSdk1YR05rR244emxDOHNTa2h6MmMvY0sxbExGK0ZVaTkwaFBKWW8rVkhvRzhsZzJHa3l6OU5naDhaNGx2cXdEMEJhbndmTnMvZlVaVlFjc2Y5VHJWYmRRQ0pIVjk3bENjWExPMFVzdS9jQjdqQm02aTlpZ1E3Tmp3b3RyV21jY0VPbE9ubjVDTG52VjZhTGdjMkZzRjk4WlRidzhVTjJicFk4OWEvM05rZFpCUEJHeWtvU0xCNmtrWTkybk9kajJPdVdaSzVITExhU2ovdHJzMjdYaTNEWVp2Y1RmbG1WWFJrQWJ0QnVDeTd5T1E2YXVtNUFvdmF0VEdrNlQ0NHl3V2wxKzU2ZVF1QzF3aXhRZkRhTzlTSmhtVnoxOWxaOWZnM3BJV3BFakgvczEvc1dzcXdaS001QU9SUkxyQTFDOEZNTnh3OFlRZmpVRFAxWWxFM2VzYWJyTnBDT1dUeUVlNjNra0U0YzlZRi9hQTFIb1ljekVZNzJqNkF1akE2SnRVR0lQcENUMmZSOEQ4eTNhMjF1T3MxMmJPVEtaeGU3SHNQTkZkOTZ5RlNWYXRqRE1rYzZOaTZSY0VEOWp0K1RLSmZuZWtXK1FiZ1ZTZmdaRWQ4NW85ZXIwR09HRklYQXcvTU81Tjh5MGZqRzQ4cjJwamhlcnlEUVR4NkowbUVGSXVMVEU0Qlk5Y1dBbUwyL25RMUhJSUJhUGIyM2R3KzF6NjhrdmkzWEs2M0JiRmJnYzIrN1JxWXpWWFpvK1ZQTzMzR3RpTHBXUDZ2THRvNmFydU1wMG9KWTZDMnc2YnowK3pUTkV4TmZPNk9INFNqcE1XTC9kSElQeWQrZGtDRkJ0dkpYeTN3eHhhamR3U2V2Y1hZWXdURTJDTStyMmR5VFFVUW5uNk5QN0IvNTNtOWRjMGpObW1HdFBQWlQrVi9kdEVuNWVUaGVJcUQwWDJseXJBbHJqc2prVXFzOERGcWJ5RUV4Y1lsWTJGd1RFampHdmdLSUk0N0dpNjlpTWIwMWZ4cDZuQ3hiZnh4V2lHc1k0MnlWWnFmR29RY1ZVV3hkN1U4TWpVNkh0QTh2bTAxUE5yRnVzTVhnd2I0aEw1M2lCWTdsQmlKZGxGM2dRSnVyTmNWVDRVMXp0RlBJWG91WlVNZHpqMkpPbVE5WmRHRmdLbE5YelNsVGM0Q0VBMHlyaDk2eFNqY25wSXZmaE0xV0x2QW13VTN5a29ScU1ia2lBdCtjS0JZdnFHaGhranIvRXplMWRCYjNkblR1NUNPdE1GeFBvMVozcEV1bWg1bTlUL3c0Ni9lRDhMamE1azVTczNrekFBUWZFdmVidnB1L0NPU01FWXRUTXpTeGpINitVSXZhZHlpZUVlTWlOUy80OGdPZTB4K0ZEVHlXVURzMysvU09iUXU5ckhkMkVWSm5UNFNiOTlneVQvUGg2UFRsTDQ3cWxwVEVwYXlxb01HTkV6anhyZWNsZHpRNUNQbXEzSDlaY2VnSllVdTJQTm9FOEhvYSt3MWJpck91R0FMYnVia2lCSVlxQS8ydGFSMllIaTRHSGt2M1VBSGpNQWpnYUdaMVFXb2Z5L3JXQ25HVjE4ZGRzb0w1a1ZYQUxYZ2xnOXZQTWFQN2JmY1gyb0g5bFZkK0hvbUUyak1DanBFNGh3R0paK1pmMHFMTXNUam5aSUZwdU9NL0N1U3BxWTNOcEp3UExOaytCRkROTGFncVVDbnJXYUhqNFpURVN1ekVpL25GZVRDaVd6eHVHMUxweHNaOVA4UThCWCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiUElEOjkyMDgtMjAwMi0yLTMzODA3NDY3NjM3MSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2dpdmVubmFtZSI6IkFkb21hcyBDaXBseXMiLCJsb2dpblR5cGUiOiJLZXlDYXJkIiwicGlkIjoiOTIwOC0yMDAyLTItMzM4MDc0Njc2MzcxIiwiYjNmIjoiL0pBYXZoT3lzU0ZjWVBqM0ZIK1RUUHovbmc3WG84NGZHZ3B3MlhLdGZJRT0iLCJ1c2VySWQiOiI1NjgxMzEiLCJleHAiOjE3MDE1MTI2NTgsImlzcyI6IkVuZXJnaW5ldCIsImp0aSI6ImJhMTE2NzQ4LTI4ZGYtNDkwYi04YjI1LTc1Mzk4MWExMGM5YSIsInRva2VuTmFtZSI6IlByb2pla3QiLCJhdWQiOiJFbmVyZ2luZXQifQ.67x-rcNmBqTJOn4U37skMcsX5KfkfbNfu2Kt765Id5c"
 
-typedef struct {
-    char name[MAX_LENGTH];
-    double standby_watt;
-    double running_watt;
-    int amounts;
-
-} device;
+struct MemoryStruct
+{
+    char *memory;
+    size_t size;
+};
 
 typedef struct {
     double net_tariff[24];
@@ -37,21 +35,14 @@ typedef struct {
     double VAT[24];
 } total_prices;
 
-// Prototypes
-void fill_device(FILE *source, device *devices);
-
-void print_devices(device *devices);
-
-void get_api_fees(char answer);
-
+// prototypes
+void get_api_token(char answer, char *access_token_string);
+void get_metering_point(char answer, char *access_token_string, char *meter_id);
+void get_tarrifs(char answer, char *access_token_string, char *meter_id);
 void get_api_spot_prices();
-
 void readPrices_spotPrice(double *SpotPriceDKK);
-
 void readPrices_tariffs(prices *price_data);
-
 void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *result);
-
 void print_prices(double *SpotPriceDKK, total_prices *result);
 
 
@@ -63,13 +54,17 @@ int main()
     char answer1;
     double SpotPricesDKK[48];
 
+    char access_token_string[BUFFER_SIZE];
+    char meter_id[METER_SIZE];
     price_data = malloc(sizeof(prices));
     result = malloc(sizeof(total_prices));
 
     printf("Do you want a new access token? y/n: ");
     scanf("%c", &answer);
 
-    get_api_fees(answer);
+    get_api_token(answer, access_token_string);
+    get_metering_point(answer, access_token_string, meter_id);
+    get_tarrifs(answer, access_token_string, meter_id);
 
     printf("Do you want spot prices? y/n: ");
     scanf(" %c", &answer1);
@@ -86,128 +81,276 @@ int main()
     return 0;
 }
 
-void get_api_fees(char answer) {
+static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp)
+{
+    size_t realsize = size * nmemb;
+    struct MemoryStruct *mem = (struct MemoryStruct *)userp;
+
+    char *ptr = realloc(mem->memory, mem->size + realsize + 1);
+    if (!ptr)
+    {
+        /* out of memory! */
+        printf("not enough memory (realloc returned NULL)\n");
+        return 0;
+    }
+
+    mem->memory = ptr;
+    memcpy(&(mem->memory[mem->size]), contents, realsize);
+    mem->size += realsize;
+    mem->memory[mem->size] = 0;
+
+    return realsize;
+}
+
+void get_api_token(char answer, char *access_token_string)
+{
     CURL *curl;
     CURLcode res;
     curl_global_init(CURL_GLOBAL_ALL);
 
     struct curl_slist *headers = NULL;
 
+    json_object *parsed_json;
+    json_object *access_token;
+    json_object *new_json;
+
+    const char *access_token_str;
+
+    char buffer[BUFFER_SIZE];
+
+    struct MemoryStruct chunk;
+
     FILE *access_token_file;
-    FILE *metering_points;
-    FILE *prices;
 
-    char buffer[5000];
+    chunk.memory = malloc(1); /* will be grown as needed by the realloc above */
+    chunk.size = 0;           /* no data at this point */
 
-    struct json_object *parsed_json;
-    struct json_object *access_token;
-
-    if (answer == 'y') {
-        access_token_file = fopen("../accessToken.json",
-                                  "w"); // w stands for write, it replaces the old data with the new
+    if (answer == 'y')
+    {
 
         headers = curl_slist_append(headers, "Authorization: Bearer " REFRESH_TOKEN);
 
         curl = curl_easy_init();
-        if (curl) {
+        if (curl)
+        {
             curl_easy_setopt(curl, CURLOPT_URL, "https://api.eloverblik.dk/customerapi/api/token");
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, access_token_file);
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback); // this is saved into the WriteMemoryCallback function as a *ptr
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
             res = curl_easy_perform(curl);
 
-            if (res != CURLE_OK) {
+            if (res != CURLE_OK)
+            {
                 printf("curl_easy_perform() returned %s\n", curl_easy_strerror(res));
             }
+            else
+            {
 
-            fclose(access_token_file);
+                parsed_json = json_tokener_parse(chunk.memory);
+                json_object_object_get_ex(parsed_json, "result", &access_token);
+
+                access_token_str = json_object_get_string(access_token);
+
+                char buf[json_object_get_string_len(access_token)];
+
+                strcpy(buf, access_token_str);
+
+                char header_string[json_object_get_string_len(access_token) + 23];
+                strcpy(header_string, "Authorization: Bearer ");
+
+                strcat(header_string, buf);
+
+                strcpy(access_token_string, header_string);
+
+                new_json = json_object_new_object();
+                json_object_object_add(new_json, "result", json_object_new_string(header_string));
+
+                access_token_file = fopen("../accessToken.json", "w");
+                fprintf(access_token_file, "%s", json_object_get_string(new_json));
+                fclose(access_token_file);
+            }
+
             curl_easy_cleanup(curl);
         }
-    } else {
 
-        // Here we get the access token from the json file
+        json_object_put(new_json);
+        json_object_put(parsed_json);
+        free(chunk.memory);
+    }
+
+    curl_global_cleanup();
+}
+
+void get_metering_point(char answer, char *access_token_string, char *meter_id)
+{
+
+    CURL *curl;
+    CURLcode res;
+    curl_global_init(CURL_GLOBAL_ALL);
+
+    struct curl_slist *headers = NULL;
+
+    struct MemoryStruct chunk;
+
+    FILE *access_token_file;
+
+    chunk.memory = malloc(1); /* will be grown as needed by the realloc above */
+    chunk.size = 0;           /* no data at this point */
+
+    if (answer == 'y')
+    {
+        headers = curl_slist_append(headers, access_token_string);
+    }
+    else
+    {
+        FILE *access_token_file;
+
+        char buffer[BUFFER_SIZE];
+
+        json_object *parsed_json;
+        json_object *access_token;
+
         access_token_file = fopen("../accessToken.json", "r");
-        fread(buffer, 5000, 1, access_token_file);
+        fread(buffer, BUFFER_SIZE, 1, access_token_file);
         fclose(access_token_file);
 
         parsed_json = json_tokener_parse(buffer);
         json_object_object_get_ex(parsed_json, "result", &access_token);
 
-        const char *access_token_string = json_object_get_string(access_token);
+        headers = curl_slist_append(headers, json_object_get_string(access_token));
 
-        char buf[json_object_get_string_len(access_token)];
+        json_object_put(parsed_json);
+    }
 
-        strcpy(buf, access_token_string);
+    curl = curl_easy_init();
+    if (curl)
+    {
+        curl_easy_setopt(curl, CURLOPT_URL, "https://api.eloverblik.dk/customerapi/api/meteringpoints/meteringpoints?includeAll=false");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        // curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, save_meter_result);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback); // this is saved into the WriteMemoryCallback function as a *ptr
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
+        res = curl_easy_perform(curl);
 
-        char header_string[json_object_get_string_len(access_token) + 23];
-        strcpy(header_string, "Authorization: Bearer ");
+        if (res != CURLE_OK)
+        {
+            printf("curl_easy_perform() returned %s\n", curl_easy_strerror(res));
+        }
+        else
+        {
+            FILE *file;
 
-        strcat(header_string, buf);
+            json_object *parsed_json;
+            json_object *meter_parent;
+            json_object *meter_child;
+            json_object *meter_point_id;
 
-        headers = curl_slist_append(headers, header_string);
+            parsed_json = json_tokener_parse(chunk.memory);
+            json_object_object_get_ex(parsed_json, "result", &meter_parent);
+            meter_child = json_object_array_get_idx(meter_parent, 0);
+            json_object_object_get_ex(meter_child, "meteringPointId", &meter_point_id);
 
-        curl = curl_easy_init();
-        if (curl) {
-            metering_points = fopen("../meter.json", "w");
-            curl_easy_setopt(curl, CURLOPT_URL,
-                             "https://api.eloverblik.dk/customerapi/api/meteringpoints/meteringpoints?includeAll=false");
-            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, metering_points);
-            res = curl_easy_perform(curl);
+            json_object *new_meter_parent = json_object_new_object();
+            json_object *new_meter_child = json_object_new_object();
+            json_object *new_meter_child_array = json_object_new_array();
 
-            if (res != CURLE_OK) {
-                printf("curl_easy_perform() returned %s\n", curl_easy_strerror(res));
-            }
-            //Flushing the file, so we can access the information, whilst running
-            fclose(metering_points);
+            json_object_array_add(new_meter_child_array, json_object_get(meter_point_id));
+            json_object_object_add(new_meter_child, "meteringPoint", new_meter_child_array);
+            json_object_object_add(new_meter_parent, "meteringPoints", new_meter_child);
+
+            file = fopen("../meter.json", "w"); // w stands for write, it replaces the old data with the new
+            fprintf(file, "%s", json_object_get_string(new_meter_parent));
+            fclose(file);
+
+            strcpy(meter_id, json_object_get_string(new_meter_parent));
+
+            json_object_put(new_meter_parent);
+            json_object_put(parsed_json);
+
             curl_easy_cleanup(curl);
         }
     }
 
-    // Here we get the access token from the json file
-    access_token_file = fopen("../accessToken.json", "r");
-    fread(buffer, 5000, 1, access_token_file);
-    fclose(access_token_file);
+    curl_global_cleanup();
+}
 
-    parsed_json = json_tokener_parse(buffer);
-    json_object_object_get_ex(parsed_json, "result", &access_token);
+void get_tarrifs(char answer, char *access_token_string, char *meter_id)
+{
+    CURL *curl;
+    CURLcode res;
+    curl_global_init(CURL_GLOBAL_ALL);
 
-    const char *access_token_string = json_object_get_string(access_token);
-
-    char buf[json_object_get_string_len(access_token)];
-
-    strcpy(buf, access_token_string);
-
-    char header_string[json_object_get_string_len(access_token) + 23];
-    strcpy(header_string, "Authorization: Bearer ");
-
-    strcat(header_string, buf);
-
-    headers = curl_slist_append(headers, header_string);
-    headers = curl_slist_append(headers, "Content-Type: application/json");
+    struct curl_slist *headers = NULL;
 
     curl = curl_easy_init();
-    if (curl) {
-        char *data = "{\"meteringPoints\":{\"meteringPoint\" : [\"571313105200443001\"]}}";
+    if (curl)
+    {
+        FILE *tarrif_file;
+        tarrif_file = fopen("../tarrifs.json", "w");
+        curl_easy_setopt(curl, CURLOPT_URL, "https://api.eloverblik.dk/customerapi/api/meteringpoints/meteringpoint/getcharges");
 
-        prices = fopen("../output.json", "w");
-        curl_easy_setopt(curl, CURLOPT_URL,
-                         "https://api.eloverblik.dk/customerapi/api/meteringpoints/meteringpoint/getcharges");
+        json_object *parsed_json;
+        json_object *access_token;
+        json_object *parsed_meter;
+
+        if (answer == 'y')
+        {
+            headers = curl_slist_append(headers, access_token_string);
+            headers = curl_slist_append(headers, "Content-Type: application/json");
+
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, meter_id);
+        }
+        else
+        {
+            FILE *access_token_file;
+            FILE *metering_point_file;
+
+            char buffer[BUFFER_SIZE];
+            char meter_buffer[METER_SIZE];
+
+            access_token_file = fopen("../accessToken.json", "r");
+            fread(buffer, BUFFER_SIZE, 1, access_token_file);
+            fclose(access_token_file);
+
+            parsed_json = json_tokener_parse(buffer);
+            json_object_object_get_ex(parsed_json, "result", &access_token);
+
+            headers = curl_slist_append(headers, json_object_get_string(access_token));
+            headers = curl_slist_append(headers, "Content-Type: application/json");
+
+            metering_point_file = fopen("../meter.json", "r");
+            fread(meter_buffer, METER_SIZE, 1, metering_point_file);
+            fclose(metering_point_file);
+
+            parsed_meter = json_tokener_parse(meter_buffer);
+
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_object_get_string(parsed_meter));
+        }
+
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, prices);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, tarrif_file);
         res = curl_easy_perform(curl);
 
-        if (res != CURLE_OK) {
+        if (res != CURLE_OK)
+        {
             printf("curl_easy_perform() returned %s\n", curl_easy_strerror(res));
         }
-        fclose(prices);
+        fclose(tarrif_file);
+
+        if (answer == 'n')
+        {
+            json_object_put(parsed_json);
+            json_object_put(parsed_meter);
+        }
+
         curl_easy_cleanup(curl);
     }
 
     curl_global_cleanup();
 }
 
-void get_api_spot_prices() {
+void get_api_spot_prices()
+{
     CURL *curl;
     CURLcode res;
     curl_global_init(CURL_GLOBAL_ALL);
@@ -307,7 +450,7 @@ void readPrices_tariffs(prices *price_data) {
     size_t n_prices;
     size_t i;
 
-    tariffs_file = fopen("../output.json", "r");
+    tariffs_file = fopen("../tarrifs.json", "r");
     fread(buffer, 6000, 1, tariffs_file);
     fclose(tariffs_file);
 
