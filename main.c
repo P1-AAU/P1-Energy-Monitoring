@@ -367,6 +367,11 @@ void readPrices_tariffs(prices *price_data) {
 
 void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *result)
 {
+    time_t rawtime;
+    struct tm * timeinfo;
+    time( &rawtime );
+    timeinfo = localtime( &rawtime );
+    int current_hour = timeinfo->tm_hour;
 
     for (int i = 0; i < HOURS_IN_DAY; i++)
     {
@@ -376,8 +381,20 @@ void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *re
         result->total_tax[i] += price_data->system_tariff;
         result->total_tax[i] += price_data->balance_tariff;
         result->total_tax[i] += price_data->electricity_tax;
+    }
+
+    for(int i = 0; i < HOURS_IN_DAY; i++)
+    {
         result->VAT[i] += (SpotPriceDKK[i] + result->total_tax[i]) * 0.25; //The spot prices are already given in current hour
-        result->total_price[i] += (SpotPriceDKK[i] + result->total_tax[i]) * VAT_CONST;
+        result->total_price[i] += (SpotPriceDKK[i] + result->total_tax[current_hour]) * VAT_CONST;
+
+        if(current_hour==23)
+        {
+            current_hour = 0;
+        }else
+        {
+            current_hour++;
+        }
     }
 }
 
