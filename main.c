@@ -39,7 +39,7 @@ typedef struct
 void get_api_token();
 void get_metering_point();
 void get_tarrifs();
-void get_api_spot_prices();
+void get_spot_prices();
 void readPrices_spotPrice(double *SpotPriceDKK);
 void readPrices_tariffs(prices *price_data);
 void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *result);
@@ -47,7 +47,6 @@ void print_prices(double *SpotPriceDKK, total_prices *result);
 
 int main()
 {
-    char answer_refresh;
     char answer_access;
     char answer_spot;
     double SpotPricesDKK[48];
@@ -85,7 +84,7 @@ int main()
 
     if (answer_spot == 'y')
     {
-        get_api_spot_prices();
+        get_spot_prices();
     }
 
     readPrices_spotPrice(SpotPricesDKK);
@@ -360,7 +359,7 @@ void get_tarrifs()
     curl_global_cleanup();
 }
 
-void get_api_spot_prices()
+void get_spot_prices()
 {
     CURL *curl;
     CURLcode res;
