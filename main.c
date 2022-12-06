@@ -375,7 +375,7 @@ void get_api_spot_prices()
 void readPrices_spotPrice(double *SpotPriceDKK)
 {
     FILE *spotPrices_file; // Opens the spotPrices file
-    char buffer[6000];
+    char buffer[BUFFER_SIZE];
 
     // Here we get the access token from the json file
     json_object *parsed_json;
@@ -385,7 +385,7 @@ void readPrices_spotPrice(double *SpotPriceDKK)
     size_t i;
 
     spotPrices_file = fopen("../spotPrices.json", "r");
-    fread(buffer, 6000, 1, spotPrices_file);
+    fread(buffer, BUFFER_SIZE, 1, spotPrices_file);
     fclose(spotPrices_file);
 
     parsed_json = json_tokener_parse(buffer);
@@ -410,7 +410,7 @@ void readPrices_spotPrice(double *SpotPriceDKK)
 void readPrices_tariffs(prices *price_data)
 {
     FILE *tariffs_file; // Opens the tariffs file
-    char buffer[6000];
+    char buffer[BUFFER_SIZE];
 
     // Here we get the access token from the json file
     json_object *parsed_json;
@@ -439,7 +439,7 @@ void readPrices_tariffs(prices *price_data)
     size_t i;
 
     tariffs_file = fopen("../tarrifs.json", "r");
-    fread(buffer, 6000, 1, tariffs_file);
+    fread(buffer, BUFFER_SIZE, 1, tariffs_file);
     fclose(tariffs_file);
 
     parsed_json = json_tokener_parse(buffer);
