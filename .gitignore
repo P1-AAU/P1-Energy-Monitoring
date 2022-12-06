@@ -53,10 +53,3 @@ dkms.conf
 build
 cmake-build-debug
 .idea
-.vscode
-
-# local json files 
-accessToken.json
-meter.json
-spotPrices.json
-tarrifs.json

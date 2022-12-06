@@ -4,7 +4,7 @@ project(P1_Energy-Monitoring C)
 
 set(CMAKE_C_STANDARD 99)
 
-# we start the inculssion of an external project here
+# we start the inculsion of an external project here
 include(ExternalProject) # tells CMake that we use an external project
 set(EXTERNAL_INSTALL_LOCATION ${CMAKE_BINARY_DIR}/external) # tells cmake where to install it
 ExternalProject_add(jsonc-ext # we add an external dependency and call it jsonc-ext
@@ -26,9 +26,9 @@ add_dependencies(P1_Energy-Monitoring jsonc-ext) # tells cmake to wait with buil
 target_link_libraries(P1_Energy-Monitoring PRIVATE json-c) # link with the newly build library
 
 # this is for the curl library
-#set(CURL_LIBRARY "-lcurl")
+set(CURL_LIBRARY "-lcurl")
 find_package(CURL REQUIRED)
 
-#include_directories(${CURL_INCLUDE_DIR})
-#target_link_libraries(P1_Energy-Monitoring PRIVATE ${CURL_LIBRARIES})
+include_directories(${CURL_INCLUDE_DIR})
+target_link_libraries(P1_Energy-Monitoring PRIVATE ${CURL_LIBRARIES})
 target_link_libraries(P1_Energy-Monitoring PRIVATE CURL::libcurl)
