@@ -8,7 +8,7 @@ set(CMAKE_C_STANDARD 99)
 include(ExternalProject) # tells CMake that we use an external project
 set(EXTERNAL_INSTALL_LOCATION ${CMAKE_BINARY_DIR}/external) # tells cmake where to install it
 ExternalProject_add(jsonc-ext # we add an external dependency and call it jsonc-ext
-    GIT_REPOSITORY git@github.com:json-c/json-c.git # where to get the library from
+    GIT_REPOSITORY https://github.com/json-c/json-c # where to get the library from
     GIT_TAG 9021cdcdd01fc9dbcbe1f06391848c2ac915212f # which specific git hash to use (i.e. version), it is best practice to use a stable version, NOT their main branch (which I do here)
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION} -DCMAKE_BUILD_TYPE=Release -DCMAKE_SKIP_RPATH=FALSE -DCMAKE_MACOSX_RPATH=1 -DCMAKE_INSTALL_RPATH=${EXTERNAL_INSTALL_LOCATION}/lib # build flags
 ) 
