@@ -117,7 +117,6 @@ void get_api_token(char answer, char *access_token_string)
             }
             else
             {
-                printf("%lu bytes retrieved\n", (unsigned long)chunk.size);
 
                 parsed_json = json_tokener_parse(chunk.memory);
                 json_object_object_get_ex(parsed_json, "result", &access_token);
@@ -261,8 +260,11 @@ void get_tarrifs(char answer, char *access_token_string, char *meter_id)
         FILE *tarrif_file;
         tarrif_file = fopen("../tarrifs.json", "w");
         curl_easy_setopt(curl, CURLOPT_URL, "https://api.eloverblik.dk/customerapi/api/meteringpoints/meteringpoint/getcharges");
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        
+
+        json_object *parsed_json;
+        json_object *access_token;
+        json_object *parsed_meter;
+
         if (answer == 'y')
         {
             headers = curl_slist_append(headers, access_token_string);
@@ -277,10 +279,6 @@ void get_tarrifs(char answer, char *access_token_string, char *meter_id)
 
             char buffer[BUFFER_SIZE];
             char meter_buffer[METER_SIZE];
-
-            json_object *parsed_json;
-            json_object *access_token;
-            json_object *parsed_meter;
 
             access_token_file = fopen("../accessToken.json", "r");
             fread(buffer, BUFFER_SIZE, 1, access_token_file);
@@ -299,11 +297,9 @@ void get_tarrifs(char answer, char *access_token_string, char *meter_id)
             parsed_meter = json_tokener_parse(meter_buffer);
 
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_object_get_string(parsed_meter));
-
-            json_object_put(parsed_json);
-            json_object_put(parsed_meter);
         }
 
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, tarrif_file);
         res = curl_easy_perform(curl);
 
@@ -312,6 +308,13 @@ void get_tarrifs(char answer, char *access_token_string, char *meter_id)
             printf("curl_easy_perform() returned %s\n", curl_easy_strerror(res));
         }
         fclose(tarrif_file);
+
+        if (answer == 'n')
+        {
+            json_object_put(parsed_json);
+            json_object_put(parsed_meter);
+        }
+
         curl_easy_cleanup(curl);
     }
 
