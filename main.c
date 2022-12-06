@@ -47,16 +47,28 @@ void print_prices(double *SpotPriceDKK, total_prices *result);
 
 int main()
 {
-    prices *price_data;
-    total_prices *result;
     char answer_refresh;
     char answer_access;
     char answer_spot;
     double SpotPricesDKK[48];
 
-    price_data = malloc(sizeof(prices));
-    result = malloc(sizeof(total_prices));
+    prices *price_data = malloc(sizeof(prices));
+    total_prices *result = malloc(sizeof(total_prices));
 
+    if (!price_data)
+    {
+        /* out of memory! */
+        printf("not enough memory to allocate space for the price data\n");
+        return 0;
+    }
+
+    if (!result)
+    {
+        /* out of memory! */
+        printf("not enough memory to allocate space for the total price array\n");
+        return 0;
+    }
+    
     printf("Do you want a new access token? y/n: ");
     scanf("%c", &answer_access);
 
@@ -128,6 +140,14 @@ void get_api_token()
     FILE *access_token_file;
 
     chunk.memory = malloc(1); /* will be grown as needed by the realloc above */
+
+    if (!chunk.memory)
+    {
+        /* out of memory! */
+        printf("not enough memory to allocate space for the refresh token \n");
+        return 0;
+    }
+
     chunk.size = 0;           /* no data at this point */
 
     refresh_token_file = fopen("../refreshToken.json", "r");
@@ -202,6 +222,14 @@ void get_metering_point()
     FILE *access_token_file;
 
     chunk.memory = malloc(1); /* will be grown as needed by the realloc above */
+
+    if (!chunk.memory)
+    {
+        /* out of memory! */
+        printf("not enough memory to allocate space for the meter id \n");
+        return 0;
+    }
+
     chunk.size = 0;           /* no data at this point */
 
     char buffer[BUFFER_SIZE];
