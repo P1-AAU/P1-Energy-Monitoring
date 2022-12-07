@@ -34,7 +34,7 @@ void optimaltime(){
   char cr;
   size_t lines = 0;
 
-  while( cr != EOF ) {
+  while( cr !=EOF ) {
     if ( cr == '\n' ) {
       lines++;
     }
