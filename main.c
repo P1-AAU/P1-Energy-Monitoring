@@ -1,10 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <curl/curl.h>
-#include <json-c/json_object.h>
-#include <json-c/json_tokener.h>
 #include <math.h>
+#include <malloc.h>
 
 #define MAX_LENGTH 30
 #define MAX_LINES 1000000000
@@ -25,43 +23,43 @@ void optimaltime(){
 
   
   // Open File
-  const char fname[] = "/workspaces/P1-Energy-Monitoring/data.txt";
 
-  FILE *fp = fopen(fname, "r");
+  FILE *myFile;
+    myFile = fopen("/workspaces/P1-Energy-Monitoring/data.txt", "r");
 
-  printf("Opened file: %s\n", fname); 
-  // Counts lines
-  char cr;
-  size_t lines = 0;
+    //read file into array
+    
+    int i,
+        c,
+        array_length;
+        
+    double  temptal,
+            temptal2;
 
-  while( cr != EOF ) {
-    if ( cr == '\n' ) {
-      lines++;
+
+     for (c = getc(myFile); c != EOF; c = getc(myFile)){
+        if (c == '\n') // Increment count if this character is newline 
+        array_length = array_length + 1;
+     }
+
+  printf("The file has %d line(s)\n", array_length);
+
+    double *tempdata;
+    tempdata = malloc(array_length * sizeof(double));
+    char* buffertemp;
+    buffertemp = malloc(1 * sizeof(char));
+    char* buffer;
+
+    for (i = 0; i < array_length; i++){
+
+        fscanf(myFile, "%s\n", &buffertemp[i]);
+        tempdata[i] = strtod(&buffertemp[i], &buffer);
+
     }
-    cr = getc(fp);
-  }
-  printf("Number of lines: %ld\n", lines); 
-  char tempdata[lines];
-  rewind(fp);
 
-  // Read data
-  {
-    char *data[lines];
-    size_t n;
 
-    for (size_t i = 0; i < lines; i++) {
-      data[i] = NULL;
-      size_t n = 0;
-      getline(&data[i], &n, fp);
-    }
+    fclose(myFile);
 
-    for (size_t i = 0; i < lines; i++) {
-        tempdata[i] = *data[i];
-    }
-  }
-
-  // Close File
-  fclose(fp);
 
     double elpriser[] = {6,5,4,3,2,2,1,5,4,4,5,6,7,4,3,2,1,2,2,3,4,12,12,12,12,12,12};
 
@@ -75,8 +73,8 @@ void optimaltime(){
     hour_of_the_day,
     starttime,
     runningtemphour,
-    array_length = sizeof(tempdata)/sizeof(tempdata[0]),
     day_clock; 
+
 
    for (day_clock = 0; day_clock < 86400; day_clock++)
    {
@@ -87,17 +85,19 @@ void optimaltime(){
 
     for (device_clock = 0; device_clock < array_length; device_clock++)
     {
-        
-    
         if(((day_clock + device_clock) % 3600) == 0){
             temphour++;
         }
-        
+        // printf("The file has %f line(s)\n", tempdata[1]);
+
         double elpriser_watt_second = elpriser[temphour];
 
         countingcost = elpriser_watt_second * tempdata[device_clock] + countingcost;
-      
         
+        //printf("The file has %d line(s)\n", tempdata[device_clock]);
+
+        //printf("temp %lf\n",tempdata[device_clock]);
+      
     }
     if (countingcost < totalcost)
     {
@@ -106,6 +106,7 @@ void optimaltime(){
     }  
     countingcost = 0;
     temphour = 0;
+
    }
    printf("Det er billigst klokken %d, og det koster %d\n", starttime, totalcost);
    
