@@ -32,31 +32,34 @@ void optimaltime(){
     int i,
         c,
         array_length;
-        
-    double  temptal,
+    double temptal,
             temptal2;
 
+
+    if (myFile == NULL){
+        printf("Error Reading File\n");
+        exit (0);
+    }
 
      for (c = getc(myFile); c != EOF; c = getc(myFile)){
         if (c == '\n') // Increment count if this character is newline 
         array_length = array_length + 1;
      }
-
-  printf("The file has %d line(s)\n", array_length);
+    rewind(myFile);
 
     double *tempdata;
     tempdata = malloc(array_length * sizeof(double));
     char* buffertemp;
-    buffertemp = malloc(1 * sizeof(char));
+    buffertemp = malloc(array_length * sizeof(char));
     char* buffer;
+    
+  printf("The file has %d line(s)\n", array_length);
 
     for (i = 0; i < array_length; i++){
 
         fscanf(myFile, "%s\n", &buffertemp[i]);
         tempdata[i] = strtod(&buffertemp[i], &buffer);
-
     }
-
 
     fclose(myFile);
 
@@ -64,7 +67,7 @@ void optimaltime(){
     double elpriser[] = {6,5,4,3,2,2,1,5,4,4,5,6,7,4,3,2,1,2,2,3,4,12,12,12,12,12,12};
 
     int  watt, 
-    totalcost = 1000000, 
+    totalcost = 1000000000, 
     countingcost, 
     device_stoptime,
     temphour, 
@@ -74,6 +77,9 @@ void optimaltime(){
     starttime,
     runningtemphour,
     day_clock; 
+
+    double  finaltime,
+            finalprice;
 
 
    for (day_clock = 0; day_clock < 86400; day_clock++)
@@ -88,26 +94,25 @@ void optimaltime(){
         if(((day_clock + device_clock) % 3600) == 0){
             temphour++;
         }
-        // printf("The file has %f line(s)\n", tempdata[1]);
-
+        
         double elpriser_watt_second = elpriser[temphour];
 
         countingcost = elpriser_watt_second * tempdata[device_clock] + countingcost;
-        
-        //printf("The file has %d line(s)\n", tempdata[device_clock]);
-
-        //printf("temp %lf\n",tempdata[device_clock]);
       
     }
     if (countingcost < totalcost)
     {
         totalcost = countingcost;
         starttime = day_clock;
+        finaltime = (double)day_clock / 3600;
+        finalprice = (double)countingcost / 3600000;
+        
     }  
     countingcost = 0;
     temphour = 0;
-
+    
    }
-   printf("Det er billigst klokken %d, og det koster %d\n", starttime, totalcost);
-   
+    
+    printf("Det er billigst klokken %lf, og det koster %lf\n", finaltime, finalprice);
+
 }
