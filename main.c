@@ -119,10 +119,13 @@ static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, voi
     // Here the size of the returned content gets caluclated
     size_t realsize = size * nmemb;
 
-    // here we assign the memory struct to value of userp
+    // Here we assign the memory struct to value of userp
     // which contains the memory and size of the api output
     MemoryStruct *mem = (MemoryStruct *)userp;
 
+    // Here we use realloc to increase the memory already allocated
+    // we increase the mem->memory by taking the prevous memory size and adding
+    // the size of the returned content that we calculated earlier. 
     char *ptr = realloc(mem->memory, mem->size + realsize + 1);
     if (!ptr)
     {
@@ -131,14 +134,28 @@ static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, voi
         return 0;
     }
 
+    // Here we update the mem->memory to the newly allocated memory we allocated with realloc above.
     mem->memory = ptr;
+
+    // We then add the new content to the end of our current memory
+    // mem->memory[mem->size] represents the end of our memory here we then
+    // add the contents to it using memcpy where we also specifiy the size of
+    // our new content which we calculated earlier.
     memcpy(&(mem->memory[mem->size]), contents, realsize);
+    
+    // Now we add the contents size to the mem_size and
+    // update the mem->memory so that it starts on the new size
     mem->size += realsize;
     mem->memory[mem->size] = 0;
 
+    // Lastly we return the contents size so that curl knows that
+    // we recived the correct amount of data.
+    // otherwise curl would have returned an error.
     return realsize;
 }
 
+// This function asks the api for a new access token
+// which is usable for the next 24 hours.
 void get_api_token()
 {
     CURL *curl;
@@ -154,15 +171,21 @@ void get_api_token()
     json_object *new_json;
 
     const char *access_token_str;
-    char buffer[BUFFER_SIZE];
 
-    MemoryStruct chunk;
+    char buffer[BUFFER_SIZE];
 
     FILE *refresh_token_file;
     FILE *access_token_file;
 
-    chunk.memory = malloc(1); /* will be grown as needed by the realloc above */
+    MemoryStruct chunk;
 
+    // Here we start by allocating some space for the curl output
+    // This memory will then automaticly increase due to the realloc in WriteMemoryCallback
+    chunk.memory = malloc(1);
+    chunk.size = 0;           /* no data at this point */
+
+    // Here we test if the memory allocation was succesful
+    // and aborts if it was not
     if (!chunk.memory)
     {
         /* out of memory! */
@@ -170,33 +193,47 @@ void get_api_token()
         abort();
     }
 
-    chunk.size = 0;           /* no data at this point */
-
+    // Here we open and reads the whole file into a buffer
     refresh_token_file = fopen("../refreshToken.json", "r");
-
     fread(buffer, BUFFER_SIZE, 1, refresh_token_file);
 
+    // We then create a json object out of the buffer
     parsed_refresh_token = json_tokener_parse(buffer);
+    // Now we search the json object for a key called "token" and assign its value
     refresh_token = json_object_object_get(parsed_refresh_token, "token");
 
+    // Here we parse the value we got above into the header as a string
+    // the parsed value is a personal refresh token that a user can get from eloverblik.dk
+    // it is parsed in the format: "Authorization: Bearer <token>"
+    // without this token the api wouldnt allow us access
     headers = curl_slist_append(headers, json_object_get_string(refresh_token));
 
+    // Here we start the Curl which is what talks to the api
     curl = curl_easy_init();
     if (curl)
     {
+        // We then pass infromation to curl, such as the api link, headers and output place.
         curl_easy_setopt(curl, CURLOPT_URL, "https://api.eloverblik.dk/customerapi/api/token");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback); // this is saved into the WriteMemoryCallback function as a *ptr
+        // These 2 options below is showing where curl should output the result
+        // in this case it outputs the result to our callback function
+        //  WriteMemoryCallback and to the struct array called chunk.
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
+        
+        // Here we finally perform the call to the api
         res = curl_easy_perform(curl);
 
+        // We then test if the call was succesful and if not it returns an error message
         if (res != CURLE_OK)
         {
             printf("curl_easy_perform() returned %s\n", curl_easy_strerror(res));
         }
         else
         {
+            // Here we create a json object out of the api output
             parsed_json = json_tokener_parse(chunk.memory);
+            // 
             access_token = json_object_object_get(parsed_json, "result");
 
             access_token_str = json_object_get_string(access_token);
