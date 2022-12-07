@@ -53,3 +53,9 @@ dkms.conf
 build
 cmake-build-debug
 .idea
+
+# Json files
+accessToken.json
+meter.json
+spotPrices.json
+tarrifs.json
