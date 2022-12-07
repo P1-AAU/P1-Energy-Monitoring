@@ -119,7 +119,8 @@ static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, voi
     // Here the size of the returned content gets caluclated
     size_t realsize = size * nmemb;
 
-    
+    // here we assign the memory struct to value of userp
+    // which contains the memory and size of the api output
     MemoryStruct *mem = (MemoryStruct *)userp;
 
     char *ptr = realloc(mem->memory, mem->size + realsize + 1);
@@ -552,7 +553,6 @@ void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *r
     time(&rawtime);
     timeinfo = localtime(&rawtime);
     int current_hour = timeinfo->tm_hour;
-
     for (int i = 0; i < HOURS_IN_DAY; i++)
     {
         result->total_tax[i] += price_data->net_tariff[i];
