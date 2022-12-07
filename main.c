@@ -6,12 +6,14 @@
 #include <json-c/json_tokener.h>
 #include <time.h>
 
+// predefined values
 #define MAX_LENGTH 30
 #define HOURS_IN_DAY 24
 #define VAT_CONST 1.25
 #define BUFFER_SIZE 5000
 #define METER_SIZE 100
 
+// Structs
 typedef struct
 {
     char *memory;
@@ -26,7 +28,7 @@ typedef struct
     double system_tariff;
     double balance_tariff;
     double electricity_tax;
-} prices;
+} tarrifs;
 
 typedef struct
 {
@@ -41,8 +43,8 @@ void get_metering_point();
 void get_tarrifs();
 void get_spot_prices();
 void readPrices_spotPrice(double *SpotPriceDKK);
-void readPrices_tariffs(prices *price_data);
-void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *result);
+void readPrices_tariffs(tarrifs *price_data);
+void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *result);
 void print_prices(double *SpotPriceDKK, total_prices *result);
 
 int main()
@@ -51,13 +53,15 @@ int main()
     char answer_spot;
     double SpotPricesDKK[48];
 
-    prices *price_data = malloc(sizeof(prices));
+    // Here we allocate memory for tarrifs and total prices
+    tarrifs *price_data = malloc(sizeof(tarrifs));
     total_prices *result = malloc(sizeof(total_prices));
 
+    // Here we check if the memory has been allocated and if not we stop the program
     if (!price_data)
     {
         /* out of memory! */
-        printf("not enough memory to allocate space for the price data\n");
+        printf("not enough memory to allocate space for the tarrifs\n");
         return 0;
     }
 
@@ -71,33 +75,51 @@ int main()
     printf("Do you want a new access token? y/n: ");
     scanf("%c", &answer_access);
 
+    // If the user says yes to get a new access token, the program will generate
+    // a new accesss token and update the metering point id as well.
     if (answer_access == 'y')
     {
+        // This function generates a new access token
         get_api_token();
+        // This function retrieves the metering point id corresponding to the access token
         get_metering_point();
     }
 
+    // This function grabs the users personal tarrifs
     get_tarrifs();
 
     printf("Do you want spot prices? y/n: ");
     scanf(" %c", &answer_spot);
 
+    // If the user says yes to get new spot prices the program will
+    // retrieve the spot prices from current hour and as far ahead as possible
     if (answer_spot == 'y')
     {
         get_spot_prices();
     }
 
+    // These fucntions reads the spotprices and tarrifs from the files.
     readPrices_spotPrice(SpotPricesDKK);
     readPrices_tariffs(price_data);
+    // This function calculates the total prices
     total_price_calc(SpotPricesDKK, price_data, result);
+    // This function prints the finished result in a readable way.
     print_prices(SpotPricesDKK, result);
+
+    // Here we free the allocated memory again.
+    free(price_data);
+    free(result);
 
     return 0;
 }
 
+// This is a callback function used to allocate enough memory for the content returned by the api
 static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
+    // Here the size of the returned content gets caluclated
     size_t realsize = size * nmemb;
+
+    
     MemoryStruct *mem = (MemoryStruct *)userp;
 
     char *ptr = realloc(mem->memory, mem->size + realsize + 1);
@@ -144,7 +166,7 @@ void get_api_token()
     {
         /* out of memory! */
         printf("not enough memory to allocate space for the refresh token \n");
-        return 0;
+        abort();
     }
 
     chunk.size = 0;           /* no data at this point */
@@ -226,7 +248,7 @@ void get_metering_point()
     {
         /* out of memory! */
         printf("not enough memory to allocate space for the meter id \n");
-        return 0;
+        abort();
     }
 
     chunk.size = 0;           /* no data at this point */
@@ -434,7 +456,7 @@ void readPrices_spotPrice(double *SpotPriceDKK)
     json_object_put(parsed_json); // Frees json-object from memory
 }
 
-void readPrices_tariffs(prices *price_data)
+void readPrices_tariffs(tarrifs *price_data)
 {
     FILE *tariffs_file; // Opens the tariffs file
     char buffer[BUFFER_SIZE];
@@ -523,7 +545,7 @@ void readPrices_tariffs(prices *price_data)
     json_object_put(parsed_json); // Frees json-object from memory
 }
 
-void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *result)
+void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *result)
 {
     time_t rawtime;
     struct tm *timeinfo;
