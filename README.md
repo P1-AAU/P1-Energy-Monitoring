@@ -1,8 +1,17 @@
-# P1-Energy-Monitoring
+# Energi Price Calculator
 
-This C program uses the json-c and curl libraries to obtain energi spotprices and tariffs from APIs. 
-Once it has retrieved this information, it uses it to calculate the prices for each hour and present them to the user. 
+This program is a C program that uses the json-c and curl libraries to obtain energi spotprices and tariffs from two different remote servers. The spotprices are obtained from an API provided by energidataservice.dk, while the tariffs are obtained from an API provided by datahub.
 
-This program may be useful for individuals or businesses who are interested in tracking the cost of energi in real-time and making informed decisions about their energy usage. 
+In addition to retrieving and presenting this information to the user, the program also takes energy usage data from devices, such as a washing machine cycle, and uses it to search for the cheapest time to run the device. This allows users to optimize their energy usage and save money on their energy bills.
 
-The program takes advantage of the json-c and curl libraries to handle the data retrieval and parsing process, which allows the program to focus on the core functionality of calculating and presenting the prices to the user. Overall, this program provides a useful and convenient way to stay up-to-date on energi prices and make informed decisions about energy usage.
+This program was originally built as part of a university project at Aalborg University, and was completed at the end of the first semester.
+
+## Getting Started
+
+To get started with the program, you will need to have the json-c and curl libraries installed on your system. You can then compile the program using a C compiler, such as GCC.
+
+Once the program has been compiled, you can run it and it will retrieve the spotprices and tariffs from the remote servers, calculate the prices for each hour, and present them to the user. The program also allows the user to input energy usage data and search for the cheapest time to run a device.
+
+## License
+
+This program is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
