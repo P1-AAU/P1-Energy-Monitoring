@@ -160,7 +160,8 @@ static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, voi
     return realsize;
 }
 
-// This function asks the api for a new access token
+// This function asks the api for a new access token through
+// a GET method using Datahubs api (eloverblik.dk)
 // which is usable for the next 24 hours.
 void get_api_token()
 {
@@ -277,9 +278,10 @@ void get_api_token()
     free(chunk.memory);
 }
 
-// This function retrives the metering point id from the api
+// This function retrives the metering point id through
+// a GET method using Datahubs api (eloverblik.dk)
 // this function uses a lot of the same parts as the prevous function
-// these parts will therefore not be commented again.
+// these parts will therefore not be commented on again.
 void get_metering_point()
 {
     CURL *curl;
@@ -291,12 +293,11 @@ void get_metering_point()
 
     FILE *access_token_file;
 
-    chunk.memory = malloc(1); /* will be grown as needed by the realloc above */
-    chunk.size = 0;           /* no data at this point */
+    chunk.memory = malloc(1);
+    chunk.size = 0;
 
     if (!chunk.memory)
     {
-        /* out of memory! */
         printf("not enough memory to allocate space for the meter id \n");
         abort();
     }
@@ -374,7 +375,11 @@ void get_metering_point()
     json_object_put(parsed_json);
 }
 
-// This function retrieves the 
+// This function retrieves the users personal tarrifs
+// through a POST method using Datahubs api (eloverblik.dk)
+// by sending the meter id in json format that we made in the above function
+// this function again uses a lot of the same parts as the prevous function
+// these parts will therefore not be commented on again.
 void get_tarrifs()
 {
     CURL *curl;
@@ -407,6 +412,8 @@ void get_tarrifs()
         access_token = json_object_object_get(parsed_json, "result");
 
         headers = curl_slist_append(headers, json_object_get_string(access_token));
+        // Here we specifiy the content type for what we want to send to the api
+        // in this case we want to send the metering point id in a json format
         headers = curl_slist_append(headers, "Content-Type: application/json");
 
         metering_point_file = fopen("../meter.json", "r");
@@ -415,9 +422,11 @@ void get_tarrifs()
 
         parsed_meter = json_tokener_parse(meter_buffer);
 
+        // Here we insert the json formatted metering id into the postfield to be used by curl
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_object_get_string(parsed_meter));
 
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        // we then set the ouput place to be the tarrif file
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, tarrif_file);
         res = curl_easy_perform(curl);
 
@@ -435,12 +444,12 @@ void get_tarrifs()
     }
 }
 
+// This function retrives the spotprices through
+// a GET method using energidataservices api
 void get_spot_prices()
 {
     CURL *curl;
     CURLcode res;
-
-    struct curl_slist *headers = NULL;
 
     FILE *spot_prices_file;
 
@@ -451,14 +460,15 @@ void get_spot_prices()
 
     spot_prices_file = fopen("../spotPrices.json", "w"); // w stands for write, it replaces the old data with the new
 
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-
     curl = curl_easy_init();
     if (curl)
     {
+        // here we specify the api link and in this link we specify our output
+        // such as the data and time from when the spotprices should start and
+        // which columns from the dataset we want in our case we want the hour
+        // and the price.
         curl_easy_setopt(curl, CURLOPT_URL,
                          "https://api.energidataservice.dk/dataset/Elspotprices?start=now-P0DT1H&sort=HourDK&columns=HourDK,SpotPriceDKK&filter={%22PriceArea%22:[%22DK1%22]}");
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, spot_prices_file);
         res = curl_easy_perform(curl);
 
@@ -468,11 +478,12 @@ void get_spot_prices()
         }
 
         fclose(spot_prices_file);
-        curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
     }
 }
 
+// This function reads the retrieved spot prices from above
+// and adds them into an array called SpotPriceDKK
 void readPrices_spotPrice(double *SpotPriceDKK)
 {
     FILE *spotPrices_file; // Opens the spotPrices file
@@ -492,28 +503,41 @@ void readPrices_spotPrice(double *SpotPriceDKK)
     parsed_json = json_tokener_parse(buffer);
     records = json_object_object_get(parsed_json, "records");
     putchar('\n');
+
+    // here we assign n_prices the length of the array containing the spotprices
     n_prices = json_object_array_length(records);
     printf("Found %lu SpotPrices", n_prices);
 
     putchar('\n');
 
+    // This for loop, loops through the records array
+    // from the spotprices file which contains the spotprices
+    // it then takes the spotprices and puts them into a new array
+    // that we can use later to calculate total price
     for (i = 0; i < n_prices; i++)
     {
         json_object *spotPrices_temp;
         json_object *spotPrice_temp;
         spotPrices_temp = json_object_array_get_idx(records, i);
         spotPrice_temp = json_object_object_get(spotPrices_temp, "SpotPriceDKK");
-        SpotPriceDKK[i] = json_object_get_double(spotPrice_temp) / 1000; // Divide by 1000 to get price in DKK
+
+        // Here we use json_object_get_double to convert the json formatted spotprice
+        // to a double we then divide by 1000 to get the price in DKK 
+        SpotPriceDKK[i] = json_object_get_double(spotPrice_temp) / 1000;
     }
+
     json_object_put(parsed_json); // Frees json-object from memory
 }
 
+// This function reads the retrived tarrifs from above
+// and inserts them into a struct array for later usage
 void readPrices_tariffs(tarrifs *price_data)
 {
-    FILE *tariffs_file; // Opens the tariffs file
+    FILE *tariffs_file;
     char buffer[BUFFER_SIZE];
 
-    // Here we get the access token from the json file
+    // The tarrifs file contains a very nested json which 
+    // which requires a lot of json_objects to handle
     json_object *parsed_json;
     json_object *result_array;
     json_object *result_parent;
@@ -575,6 +599,7 @@ void readPrices_tariffs(tarrifs *price_data)
         json_object *tariffPrice_temp;
         json_object *tariffDiscounts_temp;
         json_object *tariffDiscount_temp;
+
         tariffPrices_temp = json_object_array_get_idx(tariff_prices, i);
         tariffPrice_temp = json_object_object_get(tariffPrices_temp, "price");
         price_data->net_tariff[i] = json_object_get_double(tariffPrice_temp);
@@ -594,16 +619,27 @@ void readPrices_tariffs(tarrifs *price_data)
     price_data->balance_tariff = json_object_get_double(balance_tariff_price);
     price_data->electricity_tax = json_object_get_double(electricity_tax_price);
 
-    json_object_put(parsed_json); // Frees json-object from memory
+    json_object_put(parsed_json);
 }
 
+// This function calculates the total price per hour along with the total tax
 void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *result)
 {
+    // Here we use a time library to get the current hour
+    // firstly we create a empty time object and time struct
     time_t rawtime;
     struct tm *timeinfo;
+    // we then gets the current calender time using time()
     time(&rawtime);
+    // rawtime is now a bunch of seconds, therefore we use localtime()
+    // to get a more human readable time which will be inserted into time struct
     timeinfo = localtime(&rawtime);
+    // the time struct seperates the time into hours, minutes, days and so on
+    // in our case we only want the hour so we just take the our part
+    // by writing timeinfo->tm_hour.
     int current_hour = timeinfo->tm_hour;
+
+    // Here we calculate the total tax per hour
     for (int i = 0; i < HOURS_IN_DAY; i++)
     {
         result->total_tax[i] += price_data->net_tariff[i];
@@ -614,6 +650,7 @@ void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *r
         result->total_tax[i] += price_data->electricity_tax;
     }
 
+    // Here we calculate the total VAT and price
     for (int i = 0; i < HOURS_IN_DAY; i++)
     {
         result->VAT[i] += (SpotPriceDKK[i] + result->total_tax[i]) * 0.25; // The spot prices are already given in current hour
@@ -630,6 +667,7 @@ void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *r
     }
 }
 
+// This function is used present the prices in a nicely way
 void print_prices(double *SpotPriceDKK, total_prices *result)
 {
     time_t rawtime;
