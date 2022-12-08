@@ -42,16 +42,17 @@ void get_api_token();
 void get_metering_point();
 void get_tarrifs();
 void get_spot_prices();
-void readPrices_spotPrice(double *SpotPriceDKK);
+void readPrices_spotPrice(double *SpotPriceDKK, size_t *lengthOfArray);
 void readPrices_tariffs(tarrifs *price_data);
-void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *result);
-void print_prices(double *SpotPriceDKK, total_prices *result);
+void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *result, size_t lengthOfArray);
+void print_prices(double *SpotPriceDKK, total_prices *result, size_t lengthOfArray);
 
 int main()
 {
     char answer_access;
     char answer_spot;
     double SpotPricesDKK[48];
+    size_t lengthOfSpotPriceData = 0;
 
     // Here we initialize curl so that it can be used in our program
     curl_global_init(CURL_GLOBAL_ALL);
@@ -101,13 +102,13 @@ int main()
         get_spot_prices();
     }
 
-    // These fucntions reads the spotprices and tarrifs from the files.
-    readPrices_spotPrice(SpotPricesDKK);
+    // These functions reads the spotprices and tarrifs from the files.
+    readPrices_spotPrice(SpotPricesDKK, &lengthOfSpotPriceData);
     readPrices_tariffs(price_data);
     // This function calculates the total prices
-    total_price_calc(SpotPricesDKK, price_data, result);
+    total_price_calc(SpotPricesDKK, price_data, result, lengthOfSpotPriceData);
     // This function prints the finished result in a readable way.
-    print_prices(SpotPricesDKK, result);
+    print_prices(SpotPricesDKK, result, lengthOfSpotPriceData);
 
     // Here we free the allocated memory again.
     free(price_data);
@@ -484,7 +485,7 @@ void get_spot_prices()
 
 // This function reads the retrieved spot prices from above
 // and adds them into an array called SpotPriceDKK
-void readPrices_spotPrice(double *SpotPriceDKK)
+void readPrices_spotPrice(double *SpotPriceDKK, size_t *lengthOfArray)
 {
     FILE *spotPrices_file; // Opens the spotPrices file
     char buffer[BUFFER_SIZE];
@@ -506,6 +507,7 @@ void readPrices_spotPrice(double *SpotPriceDKK)
 
     // here we assign n_prices the length of the array containing the spotprices
     n_prices = json_object_array_length(records);
+    *lengthOfArray = n_prices;
     printf("Found %lu SpotPrices", n_prices);
 
     putchar('\n');
@@ -589,7 +591,6 @@ void readPrices_tariffs(tarrifs *price_data)
     electricity_tax_array = json_object_object_get(electricity_tax_parent, "prices");
 
     n_prices = json_object_array_length(tariff_prices);
-    printf("Found %lu tariff prices", n_prices);
     putchar('\n');
 
     // Here we get the actual prices
@@ -623,7 +624,7 @@ void readPrices_tariffs(tarrifs *price_data)
 }
 
 // This function calculates the total price per hour along with the total tax
-void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *result)
+void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *result, size_t lengthOfArray)
 {
     // Here we use a time library to get the current hour
     // firstly we create a empty time object and time struct
@@ -651,7 +652,7 @@ void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *r
     }
 
     // Here we calculate the total VAT and price
-    for (int i = 0; i < HOURS_IN_DAY; i++)
+    for (int i = 0; i < lengthOfArray; i++)
     {
         result->VAT[i] += (SpotPriceDKK[i] + result->total_tax[i]) * 0.25; // The spot prices are already given in current hour
         result->total_price[i] += (SpotPriceDKK[i] + result->total_tax[current_hour]) * VAT_CONST;
@@ -668,7 +669,7 @@ void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *r
 }
 
 // This function is used present the prices in a nicely way
-void print_prices(double *SpotPriceDKK, total_prices *result)
+void print_prices(double *SpotPriceDKK, total_prices *result, size_t lengthOfArray)
 {
     time_t rawtime;
     struct tm *timeinfo;
@@ -677,7 +678,7 @@ void print_prices(double *SpotPriceDKK, total_prices *result)
     int current_hour = timeinfo->tm_hour;
 
     printf("Hour \t Total-Price \t Spot-Price \t Tax-Total \t VAT \n");
-    for (int i = 0; i < HOURS_IN_DAY; i++)
+    for (int i = 0; i < lengthOfArray; i++)
     {
         printf("%02d:00 %12lf %15lf %15lf %10lf\n", current_hour, result->total_price[i], SpotPriceDKK[i], result->total_tax[i], result->VAT[i]);
         if (current_hour == 23)
