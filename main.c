@@ -6,12 +6,14 @@
 #include <json-c/json_tokener.h>
 #include <time.h>
 
+// predefined values
 #define MAX_LENGTH 30
 #define HOURS_IN_DAY 24
 #define VAT_CONST 1.25
 #define BUFFER_SIZE 5000
 #define METER_SIZE 100
 
+// Structs
 typedef struct
 {
     char *memory;
@@ -26,7 +28,7 @@ typedef struct
     double system_tariff;
     double balance_tariff;
     double electricity_tax;
-} prices;
+} tarrifs;
 
 typedef struct
 {
@@ -41,8 +43,8 @@ void get_metering_point();
 void get_tarrifs();
 void get_spot_prices();
 void readPrices_spotPrice(double *SpotPriceDKK, size_t *lengthOfArray);
-void readPrices_tariffs(prices *price_data);
-void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *result, size_t lengthOfArray);
+void readPrices_tariffs(tarrifs *price_data);
+void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *result, size_t lengthOfArray);
 void print_prices(double *SpotPriceDKK, total_prices *result, size_t lengthOfArray);
 
 int main()
@@ -52,13 +54,18 @@ int main()
     double SpotPricesDKK[48];
     size_t lengthOfSpotPriceData = 0;
 
-    prices *price_data = malloc(sizeof(prices));
+    // Here we initialize curl so that it can be used in our program
+    curl_global_init(CURL_GLOBAL_ALL);
+
+    // Here we allocate memory for tarrifs and total prices
+    tarrifs *price_data = malloc(sizeof(tarrifs));
     total_prices *result = malloc(sizeof(total_prices));
 
+    // Here we check if the memory has been allocated and if not we stop the program
     if (!price_data)
     {
         /* out of memory! */
-        printf("not enough memory to allocate space for the price data\n");
+        printf("not enough memory to allocate space for the tarrifs\n");
         return 0;
     }
 
@@ -68,39 +75,64 @@ int main()
         printf("not enough memory to allocate space for the total price array\n");
         return 0;
     }
-    
+
     printf("Do you want a new access token? y/n: ");
     scanf("%c", &answer_access);
 
+    // If the user says yes to get a new access token, the program will generate
+    // a new accesss token and update the metering point id as well.
     if (answer_access == 'y')
     {
+        // This function generates a new access token
         get_api_token();
+        // This function retrieves the metering point id corresponding to the access token
         get_metering_point();
     }
 
+    // This function grabs the users personal tarrifs
     get_tarrifs();
 
     printf("Do you want spot prices? y/n: ");
     scanf(" %c", &answer_spot);
 
+    // If the user says yes to get new spot prices the program will
+    // retrieve the spot prices from current hour and as far ahead as possible
     if (answer_spot == 'y')
     {
         get_spot_prices();
     }
 
+    // These functions reads the spotprices and tarrifs from the files.
     readPrices_spotPrice(SpotPricesDKK, &lengthOfSpotPriceData);
     readPrices_tariffs(price_data);
+    // This function calculates the total prices
     total_price_calc(SpotPricesDKK, price_data, result, lengthOfSpotPriceData);
+    // This function prints the finished result in a readable way.
     print_prices(SpotPricesDKK, result, lengthOfSpotPriceData);
+
+    // Here we free the allocated memory again.
+    free(price_data);
+    free(result);
+
+    // Here we release all resources related to curl globally
+    curl_global_cleanup();
 
     return 0;
 }
 
+// This is a callback function used to allocate enough memory for the content returned by the api
 static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
+    // Here the size of the returned content gets caluclated
     size_t realsize = size * nmemb;
+
+    // Here we assign the memory struct to value of userp
+    // which contains the memory and size of the api output
     MemoryStruct *mem = (MemoryStruct *)userp;
 
+    // Here we use realloc to increase the memory already allocated
+    // we increase the mem->memory by taking the prevous memory size and adding
+    // the size of the returned content that we calculated earlier.
     char *ptr = realloc(mem->memory, mem->size + realsize + 1);
     if (!ptr)
     {
@@ -109,19 +141,33 @@ static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, voi
         return 0;
     }
 
+    // Here we update the mem->memory to the newly allocated memory we allocated with realloc above.
     mem->memory = ptr;
+
+    // We then add the new content to the end of our current memory
+    // mem->memory[mem->size] represents the end of our memory here we then
+    // add the contents to it using memcpy where we also specifiy the size of
+    // our new content which we calculated earlier.
     memcpy(&(mem->memory[mem->size]), contents, realsize);
+
+    // Now we add the contents size to the mem_size and
+    // update the mem->memory so that it starts on the new size
     mem->size += realsize;
     mem->memory[mem->size] = 0;
 
+    // Lastly we return the contents size so that curl knows that
+    // we recived the correct amount of data.
+    // otherwise curl would have returned an error.
     return realsize;
 }
 
+// This function asks the api for a new access token through
+// a GET method using Datahubs api (eloverblik.dk)
+// which is usable for the next 24 hours.
 void get_api_token()
 {
     CURL *curl;
     CURLcode res;
-    curl_global_init(CURL_GLOBAL_ALL);
 
     struct curl_slist *headers = NULL;
 
@@ -132,15 +178,21 @@ void get_api_token()
     json_object *new_json;
 
     const char *access_token_str;
-    char buffer[BUFFER_SIZE];
 
-    MemoryStruct chunk;
+    char buffer[BUFFER_SIZE];
 
     FILE *refresh_token_file;
     FILE *access_token_file;
 
-    chunk.memory = malloc(1); /* will be grown as needed by the realloc above */
+    MemoryStruct chunk;
 
+    // Here we start by allocating some space for the curl output
+    // This memory will then automaticly increase due to the realloc in WriteMemoryCallback
+    chunk.memory = malloc(1);
+    chunk.size = 0; /* no data at this point */
+
+    // Here we test if the memory allocation was succesful
+    // and aborts if it was not
     if (!chunk.memory)
     {
         /* out of memory! */
@@ -148,26 +200,39 @@ void get_api_token()
         abort();
     }
 
-    chunk.size = 0;           /* no data at this point */
-
+    // Here we open and reads the whole file into a buffer
     refresh_token_file = fopen("../refreshToken.json", "r");
-
     fread(buffer, BUFFER_SIZE, 1, refresh_token_file);
 
+    // We then create a json object out of the buffer
     parsed_refresh_token = json_tokener_parse(buffer);
+    // Now we search the json object for a key called "token" and assign its value
     refresh_token = json_object_object_get(parsed_refresh_token, "token");
 
+    // Here we parse the value we got above into the header as a string
+    // the parsed value is a personal refresh token that a user can get from eloverblik.dk
+    // it is parsed in the format: "Authorization: Bearer <token>"
+    // without this token the api wouldnt allow us access
     headers = curl_slist_append(headers, json_object_get_string(refresh_token));
 
+    // Here we start the Curl which is what talks to the api
     curl = curl_easy_init();
     if (curl)
     {
+        // We then pass infromation to curl, such as the api link, headers and output place.
         curl_easy_setopt(curl, CURLOPT_URL, "https://api.eloverblik.dk/customerapi/api/token");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback); // this is saved into the WriteMemoryCallback function as a *ptr
+
+        // These 2 options below is showing where curl should output the result
+        // in this case it outputs the result to our callback function
+        //  WriteMemoryCallback and to the struct array called chunk.
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
+
+        // Here we finally perform the call to the api
         res = curl_easy_perform(curl);
 
+        // We then test if the call was succesful and if not it returns an error message
         if (res != CURLE_OK)
         {
             printf("curl_easy_perform() returned %s\n", curl_easy_strerror(res));
@@ -176,44 +241,52 @@ void get_api_token()
         {
             parsed_json = json_tokener_parse(chunk.memory);
             access_token = json_object_object_get(parsed_json, "result");
-
             access_token_str = json_object_get_string(access_token);
 
+            // Here we create a string buffer with the length of the value above
             char buf[json_object_get_string_len(access_token)];
 
+            // We then copy the string we got above into the newly assigned buffer called buf
             strcpy(buf, access_token_str);
 
+            // Here we create a variable and assign its length to the length of the token + 23
+            // the + 23 is because we need to make space for "Authorization: Bearer " which is 23 char
+            // in length and is required to be in front of the token when we pass it in the curl header.
             char header_string[json_object_get_string_len(access_token) + 23];
-            strcpy(header_string, "Authorization: Bearer ");
 
+            strcpy(header_string, "Authorization: Bearer ");
             strcat(header_string, buf);
 
+            // Here we create a new empty json object
             new_json = json_object_new_object();
+            // We then create a key called "result" and add the header string to it as a string
             json_object_object_add(new_json, "result", json_object_new_string(header_string));
 
             access_token_file = fopen("../accessToken.json", "w");
             fprintf(access_token_file, "%s", json_object_get_string(new_json));
             fclose(access_token_file);
         }
-
+        // here we release all the resources curl has used above
+        curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
     }
 
+    // here we close files and free memory
     fclose(refresh_token_file);
     json_object_put(parsed_refresh_token);
     json_object_put(new_json);
     json_object_put(parsed_json);
     free(chunk.memory);
-
-    curl_global_cleanup();
 }
 
+// This function retrives the metering point id through
+// a GET method using Datahubs api (eloverblik.dk)
+// this function uses a lot of the same parts as the prevous function
+// these parts will therefore not be commented on again.
 void get_metering_point()
 {
-
     CURL *curl;
     CURLcode res;
-    curl_global_init(CURL_GLOBAL_ALL);
 
     struct curl_slist *headers = NULL;
 
@@ -221,16 +294,14 @@ void get_metering_point()
 
     FILE *access_token_file;
 
-    chunk.memory = malloc(1); /* will be grown as needed by the realloc above */
+    chunk.memory = malloc(1);
+    chunk.size = 0;
 
     if (!chunk.memory)
     {
-        /* out of memory! */
         printf("not enough memory to allocate space for the meter id \n");
         abort();
     }
-
-    chunk.size = 0;           /* no data at this point */
 
     char buffer[BUFFER_SIZE];
 
@@ -270,16 +341,25 @@ void get_metering_point()
 
             parsed_json = json_tokener_parse(chunk.memory);
             meter_parent = json_object_object_get(parsed_json, "result");
+
+            // We know that meter_parent is an array, therefore we search the array for the first index
             meter_child = json_object_array_get_idx(meter_parent, 0);
             meter_point_id = json_object_object_get(meter_child, "meteringPointId");
 
+            // Here we create two new objects and an array
             json_object *new_meter_parent = json_object_new_object();
             json_object *new_meter_child = json_object_new_object();
             json_object *new_meter_child_array = json_object_new_array();
 
-            json_object_array_add(new_meter_child_array, json_object_get(meter_point_id));
+            // We then add the meter point id to the array we just created
+            json_object_array_add(new_meter_child_array, meter_point_id);
+            // We then add a new object called "meteringPoint" and the array above as the value
             json_object_object_add(new_meter_child, "meteringPoint", new_meter_child_array);
+            // We then add another object called "meteringPoints" and assign the object above as the value
             json_object_object_add(new_meter_parent, "meteringPoints", new_meter_child);
+            // We know have a nested json format looking like this
+            // { "meteringPoints": { "meteringPoint": [ "metering point id" ] } }
+            // this is the required format for the api
 
             file = fopen("../meter.json", "w"); // w stands for write, it replaces the old data with the new
             fprintf(file, "%s", json_object_get_string(new_meter_parent));
@@ -288,20 +368,23 @@ void get_metering_point()
             json_object_put(new_meter_parent);
             json_object_put(parsed_json);
 
+            curl_slist_free_all(headers);
             curl_easy_cleanup(curl);
         }
     }
 
     json_object_put(parsed_json);
-
-    curl_global_cleanup();
 }
 
+// This function retrieves the users personal tarrifs
+// through a POST method using Datahubs api (eloverblik.dk)
+// by sending the meter id in json format that we made in the above function
+// this function again uses a lot of the same parts as the prevous function
+// these parts will therefore not be commented on again.
 void get_tarrifs()
 {
     CURL *curl;
     CURLcode res;
-    curl_global_init(CURL_GLOBAL_ALL);
 
     struct curl_slist *headers = NULL;
 
@@ -330,6 +413,8 @@ void get_tarrifs()
         access_token = json_object_object_get(parsed_json, "result");
 
         headers = curl_slist_append(headers, json_object_get_string(access_token));
+        // Here we specifiy the content type for what we want to send to the api
+        // in this case we want to send the metering point id in a json format
         headers = curl_slist_append(headers, "Content-Type: application/json");
 
         metering_point_file = fopen("../meter.json", "r");
@@ -338,9 +423,11 @@ void get_tarrifs()
 
         parsed_meter = json_tokener_parse(meter_buffer);
 
+        // Here we insert the json formatted metering id into the postfield to be used by curl
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_object_get_string(parsed_meter));
 
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        // we then set the ouput place to be the tarrif file
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, tarrif_file);
         res = curl_easy_perform(curl);
 
@@ -353,20 +440,17 @@ void get_tarrifs()
 
         json_object_put(parsed_json);
         json_object_put(parsed_meter);
-
+        curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
     }
-
-    curl_global_cleanup();
 }
 
+// This function retrives the spotprices through
+// a GET method using energidataservices api
 void get_spot_prices()
 {
     CURL *curl;
     CURLcode res;
-    curl_global_init(CURL_GLOBAL_ALL);
-
-    struct curl_slist *headers = NULL;
 
     FILE *spot_prices_file;
 
@@ -377,14 +461,15 @@ void get_spot_prices()
 
     spot_prices_file = fopen("../spotPrices.json", "w"); // w stands for write, it replaces the old data with the new
 
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-
     curl = curl_easy_init();
     if (curl)
     {
+        // here we specify the api link and in this link we specify our output
+        // such as the data and time from when the spotprices should start and
+        // which columns from the dataset we want in our case we want the hour
+        // and the price.
         curl_easy_setopt(curl, CURLOPT_URL,
                          "https://api.energidataservice.dk/dataset/Elspotprices?start=now-P0DT1H&sort=HourDK&columns=HourDK,SpotPriceDKK&filter={%22PriceArea%22:[%22DK1%22]}");
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, spot_prices_file);
         res = curl_easy_perform(curl);
 
@@ -396,10 +481,10 @@ void get_spot_prices()
         fclose(spot_prices_file);
         curl_easy_cleanup(curl);
     }
-
-    curl_global_cleanup();
 }
 
+// This function reads the retrieved spot prices from above
+// and adds them into an array called SpotPriceDKK
 void readPrices_spotPrice(double *SpotPriceDKK, size_t *lengthOfArray)
 {
     FILE *spotPrices_file; // Opens the spotPrices file
@@ -419,29 +504,42 @@ void readPrices_spotPrice(double *SpotPriceDKK, size_t *lengthOfArray)
     parsed_json = json_tokener_parse(buffer);
     records = json_object_object_get(parsed_json, "records");
     putchar('\n');
+
+    // here we assign n_prices the length of the array containing the spotprices
     n_prices = json_object_array_length(records);
     *lengthOfArray = n_prices;
     printf("Found %lu SpotPrices", n_prices);
 
     putchar('\n');
 
+    // This for loop, loops through the records array
+    // from the spotprices file which contains the spotprices
+    // it then takes the spotprices and puts them into a new array
+    // that we can use later to calculate total price
     for (i = 0; i < n_prices; i++)
     {
         json_object *spotPrices_temp;
         json_object *spotPrice_temp;
         spotPrices_temp = json_object_array_get_idx(records, i);
         spotPrice_temp = json_object_object_get(spotPrices_temp, "SpotPriceDKK");
-        SpotPriceDKK[i] = json_object_get_double(spotPrice_temp) / 1000; // Divide by 1000 to get price in DKK
+
+        // Here we use json_object_get_double to convert the json formatted spotprice
+        // to a double we then divide by 1000 to get the price in DKK 
+        SpotPriceDKK[i] = json_object_get_double(spotPrice_temp) / 1000;
     }
+
     json_object_put(parsed_json); // Frees json-object from memory
 }
 
-void readPrices_tariffs(prices *price_data)
+// This function reads the retrived tarrifs from above
+// and inserts them into a struct array for later usage
+void readPrices_tariffs(tarrifs *price_data)
 {
-    FILE *tariffs_file; // Opens the tariffs file
+    FILE *tariffs_file;
     char buffer[BUFFER_SIZE];
 
-    // Here we get the access token from the json file
+    // The tarrifs file contains a very nested json which 
+    // which requires a lot of json_objects to handle
     json_object *parsed_json;
     json_object *result_array;
     json_object *result_parent;
@@ -502,6 +600,7 @@ void readPrices_tariffs(prices *price_data)
         json_object *tariffPrice_temp;
         json_object *tariffDiscounts_temp;
         json_object *tariffDiscount_temp;
+
         tariffPrices_temp = json_object_array_get_idx(tariff_prices, i);
         tariffPrice_temp = json_object_object_get(tariffPrices_temp, "price");
         price_data->net_tariff[i] = json_object_get_double(tariffPrice_temp);
@@ -521,17 +620,27 @@ void readPrices_tariffs(prices *price_data)
     price_data->balance_tariff = json_object_get_double(balance_tariff_price);
     price_data->electricity_tax = json_object_get_double(electricity_tax_price);
 
-    json_object_put(parsed_json); // Frees json-object from memory
+    json_object_put(parsed_json);
 }
 
-void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *result, size_t lengthOfArray)
+// This function calculates the total price per hour along with the total tax
+void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *result, size_t lengthOfArray)
 {
+    // Here we use a time library to get the current hour
+    // firstly we create a empty time object and time struct
     time_t rawtime;
     struct tm *timeinfo;
+    // we then gets the current calender time using time()
     time(&rawtime);
+    // rawtime is now a bunch of seconds, therefore we use localtime()
+    // to get a more human readable time which will be inserted into time struct
     timeinfo = localtime(&rawtime);
+    // the time struct seperates the time into hours, minutes, days and so on
+    // in our case we only want the hour so we just take the our part
+    // by writing timeinfo->tm_hour.
     int current_hour = timeinfo->tm_hour;
 
+    // Here we calculate the total tax per hour
     for (int i = 0; i < HOURS_IN_DAY; i++)
     {
         result->total_tax[i] += price_data->net_tariff[i];
@@ -542,6 +651,7 @@ void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *re
         result->total_tax[i] += price_data->electricity_tax;
     }
 
+    // Here we calculate the total VAT and price
     for (int i = 0; i < lengthOfArray; i++)
     {
         result->VAT[i] += (SpotPriceDKK[i] + result->total_tax[i]) * 0.25; // The spot prices are already given in current hour
@@ -558,6 +668,7 @@ void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *re
     }
 }
 
+// This function is used present the prices in a nicely way
 void print_prices(double *SpotPriceDKK, total_prices *result, size_t lengthOfArray)
 {
     time_t rawtime;
