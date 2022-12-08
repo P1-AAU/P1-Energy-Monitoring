@@ -16,4 +16,4 @@ Once the program has been compiled, you can run it and it will retrieve the spot
 
 ## License
 
-This program is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This program is licensed under the MIT License. See the [LICENSE](LICENSE.md) file for details.
