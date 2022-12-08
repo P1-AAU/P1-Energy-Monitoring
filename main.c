@@ -139,7 +139,7 @@ void get_api_token()
     hour_of_the_day,
     starttime,
     runningtemphour,
-    day_clock; 
+    current_hour; 
 
     json_object *parsed_refresh_token;
     json_object *refresh_token;
@@ -598,9 +598,16 @@ void print_prices(double *SpotPriceDKK, total_prices *result)
     }
 }
 void optimaltime(total_prices *result)
-{
+{ 
 
-  
+    time_t rawtime;
+    struct tm *timeinfo;
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    int current_hour = timeinfo->tm_hour;
+
+    current_hour = current_hour * 60 * 60;
+
   // Open File
 
   FILE *myFile;
@@ -642,12 +649,7 @@ void optimaltime(total_prices *result)
 
     fclose(myFile);
 
-
-    double elpriser[] = {6,5,4,3,2,2,1,5,4,4,5,6,7,4,3,2,1,2,2,3,4,12,12,12,12,12,12};
-
-    int  watt, 
-    totalcost = 1000000000, 
-    countingcost, 
+    int  watt,  
     device_stoptime,
     temphour, 
     elpriser_watt_second, 
@@ -655,42 +657,46 @@ void optimaltime(total_prices *result)
     hour_of_the_day,
     starttime,
     runningtemphour,
-    day_clock; 
+    array_hour,
+    j; 
 
     double  finaltime,
-            finalprice;
+            finalprice,
+            countingcost,
+            totalcost = 10000000000;
 
-
-   for (day_clock = 0; day_clock < 86400; day_clock++)
+   for(;current_hour < 86400-array_length; current_hour++)
    {
 
-    int hour_of_the_day = day_clock / 3600;
+    int hour_of_the_day = current_hour / 3600;
 
-    temphour = hour_of_the_day;
+    temphour = j;
 
     for (device_clock = 0; device_clock < array_length; device_clock++)
     {
-        if(((day_clock + device_clock) % 3600) == 0){
+        if(((current_hour + device_clock) % 3600) == 0){ // goes to the next hour 
             temphour++;
         }
         
-        double elpriser_watt_second = elpriser[temphour];
+        double elpriser_watt_second = result->total_price[temphour];
 
         countingcost = elpriser_watt_second * tempdata[device_clock] + countingcost;
-      
+    
+    }
+    if(((current_hour) % 3600) == 0){
+        j++;
     }
     if (countingcost < totalcost)
     {
         totalcost = countingcost;
-        starttime = day_clock;
-        finaltime = (double)day_clock / 3600;
+        starttime = current_hour;
+        finaltime = (double)current_hour / 3600;
         finalprice = (double)countingcost / 3600000;
-        
     }  
+     
+
     countingcost = 0;
-    temphour = 0;
-    
    }
-    
     printf("Det er billigst klokken %lf, og det koster %lf\n", finaltime, finalprice);
+    
 }
