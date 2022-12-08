@@ -44,17 +44,18 @@ void get_api_token();
 void get_metering_point();
 void get_tarrifs();
 void get_spot_prices();
-void readPrices_spotPrice(double *SpotPriceDKK);
+void readPrices_spotPrice(double *SpotPriceDKK, size_t *lengthOfArray);
 void readPrices_tariffs(prices *price_data);
-void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *result);
-void print_prices(double *SpotPriceDKK, total_prices *result);
-void optimaltime(total_prices *result);
+void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *result, size_t lengthOfArray);
+void print_prices(double *SpotPriceDKK, total_prices *result, size_t lengthOfArray);
+
 
 int main()
 {
     char answer_access;
     char answer_spot;
     double SpotPricesDKK[48];
+    size_t lengthOfSpotPriceData = 0;
 
     prices *price_data = malloc(sizeof(prices));
     total_prices *result = malloc(sizeof(total_prices));
@@ -92,12 +93,10 @@ int main()
         get_spot_prices();
     }
 
-
-    readPrices_spotPrice(SpotPricesDKK);
+  readPrices_spotPrice(SpotPricesDKK, &lengthOfSpotPriceData);
     readPrices_tariffs(price_data);
-    total_price_calc(SpotPricesDKK, price_data, result);
-    print_prices(SpotPricesDKK, result);
-    optimaltime(result);
+    total_price_calc(SpotPricesDKK, price_data, result, lengthOfSpotPriceData);
+    print_prices(SpotPricesDKK, result, lengthOfSpotPriceData);
 
     return 0;
 }
@@ -417,7 +416,7 @@ void get_spot_prices()
     curl_global_cleanup();
 }
 
-void readPrices_spotPrice(double *SpotPriceDKK)
+void readPrices_spotPrice(double *SpotPriceDKK, size_t *lengthOfArray)
 {
     FILE *spotPrices_file; // Opens the spotPrices file
     char buffer[BUFFER_SIZE];
@@ -437,6 +436,7 @@ void readPrices_spotPrice(double *SpotPriceDKK)
     records = json_object_object_get(parsed_json, "records");
     putchar('\n');
     n_prices = json_object_array_length(records);
+    *lengthOfArray = n_prices;
     printf("Found %lu SpotPrices", n_prices);
 
     putchar('\n');
@@ -509,7 +509,6 @@ void readPrices_tariffs(prices *price_data)
     electricity_tax_array = json_object_object_get(electricity_tax_parent, "prices");
 
     n_prices = json_object_array_length(tariff_prices);
-    printf("Found %lu tariff prices", n_prices);
     putchar('\n');
 
     // Here we get the actual prices
@@ -541,7 +540,7 @@ void readPrices_tariffs(prices *price_data)
     json_object_put(parsed_json); // Frees json-object from memory
 }
 
-void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *result)
+void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *result, size_t lengthOfArray)
 {
     time_t rawtime;
     struct tm *timeinfo;
@@ -559,7 +558,7 @@ void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *re
         result->total_tax[i] += price_data->electricity_tax;
     }
 
-    for (int i = 0; i < HOURS_IN_DAY; i++)
+    for (int i = 0; i < lengthOfArray; i++)
     {
         result->VAT[i] += (SpotPriceDKK[i] + result->total_tax[i]) * 0.25; // The spot prices are already given in current hour
         result->total_price[i] += (SpotPriceDKK[i] + result->total_tax[current_hour]) * VAT_CONST;
@@ -575,7 +574,7 @@ void total_price_calc(double *SpotPriceDKK, prices *price_data, total_prices *re
     }
 }
 
-void print_prices(double *SpotPriceDKK, total_prices *result)
+void print_prices(double *SpotPriceDKK, total_prices *result, size_t lengthOfArray)
 {
     time_t rawtime;
     struct tm *timeinfo;
@@ -584,7 +583,7 @@ void print_prices(double *SpotPriceDKK, total_prices *result)
     int current_hour = timeinfo->tm_hour;
 
     printf("Hour \t Total-Price \t Spot-Price \t Tax-Total \t VAT \n");
-    for (int i = 0; i < HOURS_IN_DAY; i++)
+    for (int i = 0; i < lengthOfArray; i++)
     {
         printf("%02d:00 %12lf %15lf %15lf %10lf\n", current_hour, result->total_price[i], SpotPriceDKK[i], result->total_tax[i], result->VAT[i]);
         if (current_hour == 23)
