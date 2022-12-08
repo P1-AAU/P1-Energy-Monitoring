@@ -53,6 +53,9 @@ int main()
     char answer_spot;
     double SpotPricesDKK[48];
 
+    // Here we initialize curl so that it can be used in our program
+    curl_global_init(CURL_GLOBAL_ALL);
+
     // Here we allocate memory for tarrifs and total prices
     tarrifs *price_data = malloc(sizeof(tarrifs));
     total_prices *result = malloc(sizeof(total_prices));
@@ -71,7 +74,7 @@ int main()
         printf("not enough memory to allocate space for the total price array\n");
         return 0;
     }
-    
+
     printf("Do you want a new access token? y/n: ");
     scanf("%c", &answer_access);
 
@@ -110,6 +113,9 @@ int main()
     free(price_data);
     free(result);
 
+    // Here we release all resources related to curl globally
+    curl_global_cleanup();
+
     return 0;
 }
 
@@ -125,7 +131,7 @@ static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, voi
 
     // Here we use realloc to increase the memory already allocated
     // we increase the mem->memory by taking the prevous memory size and adding
-    // the size of the returned content that we calculated earlier. 
+    // the size of the returned content that we calculated earlier.
     char *ptr = realloc(mem->memory, mem->size + realsize + 1);
     if (!ptr)
     {
@@ -142,7 +148,7 @@ static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, voi
     // add the contents to it using memcpy where we also specifiy the size of
     // our new content which we calculated earlier.
     memcpy(&(mem->memory[mem->size]), contents, realsize);
-    
+
     // Now we add the contents size to the mem_size and
     // update the mem->memory so that it starts on the new size
     mem->size += realsize;
@@ -160,7 +166,6 @@ void get_api_token()
 {
     CURL *curl;
     CURLcode res;
-    curl_global_init(CURL_GLOBAL_ALL);
 
     struct curl_slist *headers = NULL;
 
@@ -182,7 +187,7 @@ void get_api_token()
     // Here we start by allocating some space for the curl output
     // This memory will then automaticly increase due to the realloc in WriteMemoryCallback
     chunk.memory = malloc(1);
-    chunk.size = 0;           /* no data at this point */
+    chunk.size = 0; /* no data at this point */
 
     // Here we test if the memory allocation was succesful
     // and aborts if it was not
@@ -215,12 +220,13 @@ void get_api_token()
         // We then pass infromation to curl, such as the api link, headers and output place.
         curl_easy_setopt(curl, CURLOPT_URL, "https://api.eloverblik.dk/customerapi/api/token");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
         // These 2 options below is showing where curl should output the result
         // in this case it outputs the result to our callback function
         //  WriteMemoryCallback and to the struct array called chunk.
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
-        
+
         // Here we finally perform the call to the api
         res = curl_easy_perform(curl);
 
@@ -231,48 +237,53 @@ void get_api_token()
         }
         else
         {
-            // Here we create a json object out of the api output
             parsed_json = json_tokener_parse(chunk.memory);
-            // 
             access_token = json_object_object_get(parsed_json, "result");
-
             access_token_str = json_object_get_string(access_token);
 
+            // Here we create a string buffer with the length of the value above
             char buf[json_object_get_string_len(access_token)];
 
+            // We then copy the string we got above into the newly assigned buffer called buf
             strcpy(buf, access_token_str);
 
+            // Here we create a variable and assign its length to the length of the token + 23
+            // the + 23 is because we need to make space for "Authorization: Bearer " which is 23 char
+            // in length and is required to be in front of the token when we pass it in the curl header.
             char header_string[json_object_get_string_len(access_token) + 23];
-            strcpy(header_string, "Authorization: Bearer ");
 
+            strcpy(header_string, "Authorization: Bearer ");
             strcat(header_string, buf);
 
+            // Here we create a new empty json object
             new_json = json_object_new_object();
+            // We then create a key called "result" and add the header string to it as a string
             json_object_object_add(new_json, "result", json_object_new_string(header_string));
 
             access_token_file = fopen("../accessToken.json", "w");
             fprintf(access_token_file, "%s", json_object_get_string(new_json));
             fclose(access_token_file);
         }
-
+        // here we release all the resources curl has used above
+        curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
     }
 
+    // here we close files and free memory
     fclose(refresh_token_file);
     json_object_put(parsed_refresh_token);
     json_object_put(new_json);
     json_object_put(parsed_json);
     free(chunk.memory);
-
-    curl_global_cleanup();
 }
 
+// This function retrives the metering point id from the api
+// this function uses a lot of the same parts as the prevous function
+// these parts will therefore not be commented again.
 void get_metering_point()
 {
-
     CURL *curl;
     CURLcode res;
-    curl_global_init(CURL_GLOBAL_ALL);
 
     struct curl_slist *headers = NULL;
 
@@ -281,6 +292,7 @@ void get_metering_point()
     FILE *access_token_file;
 
     chunk.memory = malloc(1); /* will be grown as needed by the realloc above */
+    chunk.size = 0;           /* no data at this point */
 
     if (!chunk.memory)
     {
@@ -288,8 +300,6 @@ void get_metering_point()
         printf("not enough memory to allocate space for the meter id \n");
         abort();
     }
-
-    chunk.size = 0;           /* no data at this point */
 
     char buffer[BUFFER_SIZE];
 
@@ -329,16 +339,25 @@ void get_metering_point()
 
             parsed_json = json_tokener_parse(chunk.memory);
             meter_parent = json_object_object_get(parsed_json, "result");
+
+            // We know that meter_parent is an array, therefore we search the array for the first index
             meter_child = json_object_array_get_idx(meter_parent, 0);
             meter_point_id = json_object_object_get(meter_child, "meteringPointId");
 
+            // Here we create two new objects and an array
             json_object *new_meter_parent = json_object_new_object();
             json_object *new_meter_child = json_object_new_object();
             json_object *new_meter_child_array = json_object_new_array();
 
-            json_object_array_add(new_meter_child_array, json_object_get(meter_point_id));
+            // We then add the meter point id to the array we just created
+            json_object_array_add(new_meter_child_array, meter_point_id);
+            // We then add a new object called "meteringPoint" and the array above as the value
             json_object_object_add(new_meter_child, "meteringPoint", new_meter_child_array);
+            // We then add another object called "meteringPoints" and assign the object above as the value
             json_object_object_add(new_meter_parent, "meteringPoints", new_meter_child);
+            // We know have a nested json format looking like this
+            // { "meteringPoints": { "meteringPoint": [ "metering point id" ] } }
+            // this is the required format for the api
 
             file = fopen("../meter.json", "w"); // w stands for write, it replaces the old data with the new
             fprintf(file, "%s", json_object_get_string(new_meter_parent));
@@ -347,20 +366,19 @@ void get_metering_point()
             json_object_put(new_meter_parent);
             json_object_put(parsed_json);
 
+            curl_slist_free_all(headers);
             curl_easy_cleanup(curl);
         }
     }
 
     json_object_put(parsed_json);
-
-    curl_global_cleanup();
 }
 
+// This function retrieves the 
 void get_tarrifs()
 {
     CURL *curl;
     CURLcode res;
-    curl_global_init(CURL_GLOBAL_ALL);
 
     struct curl_slist *headers = NULL;
 
@@ -412,18 +430,15 @@ void get_tarrifs()
 
         json_object_put(parsed_json);
         json_object_put(parsed_meter);
-
+        curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
     }
-
-    curl_global_cleanup();
 }
 
 void get_spot_prices()
 {
     CURL *curl;
     CURLcode res;
-    curl_global_init(CURL_GLOBAL_ALL);
 
     struct curl_slist *headers = NULL;
 
@@ -453,10 +468,9 @@ void get_spot_prices()
         }
 
         fclose(spot_prices_file);
+        curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
     }
-
-    curl_global_cleanup();
 }
 
 void readPrices_spotPrice(double *SpotPriceDKK)
