@@ -797,4 +797,7 @@ void optimaltime(total_prices *result, size_t lengthOfArray)
         countingcost = 0;
     }
     printf("Det er billigst klokken %lf, og det koster %lf\n", finaltime, finalprice);
+
+    free(tempdata);
+    free(buffertemp);
 }
