@@ -1,4 +1,4 @@
-# Energi Price Calculator
+# Energy Price Calculator
 
 This program is a C program that was originally built as part of a university project at Aalborg University. The project was completed at the end of the first semester.
 
