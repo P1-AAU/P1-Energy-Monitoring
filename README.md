@@ -2,7 +2,7 @@
 
 This program is a C program that was originally built as part of a university project at Aalborg University. The project was completed at the end of the first semester.
 
-The program uses the json-c and curl libraries to obtain energi spotprices and tariffs from two different remote servers. The spotprices are obtained from an API provided by energidataservice.dk, while the tariffs are obtained from an API provided by datahub.
+The program uses the json-c and curl libraries to obtain energy spotprices and tariffs from two different remote servers. The spotprices are obtained from an API provided by energidataservice.dk, while the tariffs are obtained from an API provided by datahub.
 
 In addition to retrieving and presenting this information to the user, the program also takes energy usage data from devices, such as a washing machine cycle, and uses it to search for the cheapest time to run the device. This allows users to optimize their energy usage and save money on their energy bills.
 
