@@ -46,7 +46,6 @@ void readPrices_spotPrice(double *SpotPriceDKK, size_t *lengthOfArray);
 void readPrices_tariffs(tarrifs *price_data);
 void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *result, size_t lengthOfArray);
 void print_prices(double *SpotPriceDKK, total_prices *result, size_t lengthOfArray);
-void optimaltime(total_prices *result);
 
 int main()
 {
@@ -110,8 +109,6 @@ int main()
     total_price_calc(SpotPricesDKK, price_data, result, lengthOfSpotPriceData);
     // This function prints the finished result in a readable way.
     print_prices(SpotPricesDKK, result, lengthOfSpotPriceData);
-
-    optimaltime(result);
 
     // Here we free the allocated memory again.
     free(price_data);
@@ -693,111 +690,4 @@ void print_prices(double *SpotPriceDKK, total_prices *result, size_t lengthOfArr
             current_hour++;
         }
     }
-}
-
-void optimaltime(total_prices *result)
-{
-
-    time_t rawtime;
-    struct tm *timeinfo;
-    time(&rawtime);
-    timeinfo = localtime(&rawtime);
-    int current_hour = timeinfo->tm_hour;
-
-    current_hour = current_hour * 60 * 60;
-
-    // Open File
-
-    FILE *myFile;
-    myFile = fopen("../data.txt", "r");
-
-    // read file into array
-    int i = 0,
-        c = 0,
-        array_length;
-    double temptal,
-        temptal2;
-
-    if (myFile == NULL)
-    {
-        printf("Error Reading File\n");
-        exit(0);
-    }
-
-    for (c = getc(myFile); c != EOF; c = getc(myFile))
-    {
-        if (c == '\n') // Increment count if this character is newline
-            array_length = array_length + 1;
-    }
-    rewind(myFile);
-
-    double *tempdata;
-    tempdata = malloc(array_length * sizeof(double));
-    char *buffertemp;
-    buffertemp = malloc(array_length * sizeof(char));
-    char *buffer;
-
-    printf("The file has %d line(s)\n", array_length);
-
-    for (i = 0; i < array_length; i++)
-    {
-
-        fscanf(myFile, "%s\n", &buffertemp[i]);
-        tempdata[i] = strtod(&buffertemp[i], &buffer);
-    }
-
-    fclose(myFile);
-
-    int watt,
-        device_stoptime,
-        temphour,
-        elpriser_watt_second,
-        device_clock,
-        hour_of_the_day,
-        starttime,
-        runningtemphour,
-        array_hour,
-        j;
-
-    double finaltime,
-        finalprice,
-        countingcost,
-        totalcost = 10000000000;
-
-    for (; current_hour < 86400 - array_length; current_hour++)
-    {
-
-        int hour_of_the_day = current_hour / 3600;
-
-        temphour = j;
-
-        for (device_clock = 0; device_clock < array_length; device_clock++)
-        {
-            if (((current_hour + device_clock) % 3600) == 0)
-            { // goes to the next hour
-                temphour++;
-            }
-
-            double elpriser_watt_second = result->total_price[temphour];
-
-            countingcost = elpriser_watt_second * tempdata[device_clock] + countingcost;
-        }
-        if (((current_hour) % 3600) == 0)
-        {
-            j++;
-        }
-        if (countingcost < totalcost)
-        {
-            totalcost = countingcost;
-            starttime = current_hour;
-            finaltime = (double)current_hour / 3600;
-            finalprice = (double)countingcost / 3600000;
-        }
-
-        countingcost = 0;
-    }
-    printf("Det er billigst klokken %lf, og det koster %lf\n", finaltime, finalprice);
-
-    free(tempdata);
-    free(buffertemp);
 }
