@@ -697,107 +697,143 @@ void print_prices(double *SpotPriceDKK, total_prices *result, size_t lengthOfArr
 
 void optimaltime(total_prices *result, size_t lengthOfArray)
 {
-    time_t rawtime;
-    struct tm *timeinfo;
-    time(&rawtime);
-    timeinfo = localtime(&rawtime);
-    int current_seconds = timeinfo->tm_hour * 60 * 60;
-
-    // Open File
-
+    // Opens the data file, which includes the watt usage every second the device is running
     FILE *myFile;
     myFile = fopen("../data.txt", "r");
 
-    // read file into array
-
-    int i = 0,
-        c = 0,
-        array_length = 0;
-    double temptal = 0.0,
-        temptal2 = 0.0;
-
+    // Error check if the data file is not opened
     if (myFile == NULL)
     {
         printf("Error Reading File\n");
         exit(0);
     }
 
+    // Reading the datafile into an array
+    int i = 0,
+        c = 0,
+        array_length = 0;
+
+    // Counts the amount of lines in the data file, where each line equals one second the device is running
     for (c = getc(myFile); c != EOF; c = getc(myFile))
     {
-        if (c == '\n') // Increment count if this character is newline
+        // Counts array_length +1 when there is a newline
+        if (c == '\n') 
             array_length = array_length + 1;
     }
+
+    // Sets the position at the beginning of the file again
     rewind(myFile);
 
+    // Mallocing space for the upcoming dataset
     double *tempdata;
     tempdata = malloc(array_length * sizeof(double));
     char *buffertemp;
     buffertemp = malloc(array_length * sizeof(char));
     char *buffer;
 
-    printf("The file has %d line(s)\n", array_length);
-
+    // Reads the data file and inputs it into an array
     for (i = 0; i < array_length; i++)
     {
-
-        fscanf(myFile, "%s\n", &buffertemp[i]);
+        // Takes each line of the data file as a string and stores it in buffertemp
+        fscanf(myFile, "%s\n", &buffertemp[i]); 
+        // Converts the string into a double and stores it in buffer, which puts the value in tempdata
         tempdata[i] = strtod(&buffertemp[i], &buffer);
     }
 
+    // Closes the file
     fclose(myFile);
 
     int watt = 0,
         device_stoptime = 0,
         temphour = 0,
-        elpriser_watt_second = 0,
+        energyprice_temphour = 0,
         device_clock = 0,
-        hour_of_the_day = 0,
         starttime = 0,
         runningtemphour = 0,
         array_hour = 0,
-        j = 0;
+        j = 0,
+        finalhour = 0,
+        finalminute = 0,
+        finalsecond = 0;
 
-    double finaltime = 0.0,
-        finalprice = 0.0,
-        countingcost = 0.0,
-        totalcost = 10000000000;
-    // 43200 + 46800
+    double  finalprice = 0.0,
+            countingcost = 0.0,
+            totalcost = 10000000000;
 
+    // Finds the local time of the user, when starting the program
+    time_t rawtime;
+    struct tm *timeinfo;
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+
+    // Converts the current time to seconds, for easier upcoming calculations
+    int current_seconds = timeinfo->tm_hour * 60 * 60;
+
+    // Makes a limit for the program, so it runs until we do not have information on energy prices
     int max_seconds = current_seconds + (lengthOfArray * 60 * 60);
+
+    // The "main" function to find the most optimal time of use
+
+    // The first for-loop is running through each second in the day/next day
+    // It starts at the current time 
+    // It runs until we do not have more information on energy prices minus the amount of time it takes for the device cycle to finish
+
     for (; current_seconds < max_seconds - array_length; current_seconds++)
     {
-
-        int hour_of_the_day = current_seconds / 3600;
-
+        // Temphour is useful if the device cycle runs in multiple hours, because then the energy prices has to change accordingly
         temphour = j;
 
+        // The for-loop for the device runtime
+        // device_clock is how far the device is in its cycle
+        // The array_length found before is how many seconds the device is running
         for (device_clock = 0; device_clock < array_length; device_clock++)
         {
+            // If-statement checking if the cycle runs into the next hour
+            // If it does, it counts temphour one up, which is used for the cost calculations
             if (((current_seconds + device_clock) % 3600) == 0)
-            { // goes to the next hour
+            { 
                 temphour++;
             }
+            
+            // Finding the energy price for the hour the cycle is in
+            double energyprice_temphour = result->total_price[temphour];
 
-            double elpriser_watt_second = result->total_price[temphour];
-
-            countingcost = elpriser_watt_second * tempdata[device_clock] + countingcost;
+            // Counting the cost for each second the device cycle is running
+            // Basically: Energy price for the hour * the watt usage at that time + the counting cost
+            countingcost = energyprice_temphour * tempdata[device_clock] + countingcost;
         }
+
+        // Counts the hour up if the current_seconds counts to a new hour
         if (((current_seconds) % 3600) == 0)
         {
             j++;
         }
+
+        // Checks if the counting cost is "cheaper" than the totalcost
+        // Totalcost is the running cost for the cheapest cycle
         if (countingcost < totalcost)
         {
+            // Saves the cost and the time to start the cycle
             totalcost = countingcost;
             starttime = current_seconds;
-            finaltime = (double)current_seconds / 3600;
+
+            // Converts time from seconds to hours, minutes, seconds
+            finalhour = current_seconds / 3600;
+            finalminute = (current_seconds - (3600*finalhour)) / 60;
+            finalsecond = (current_seconds - (3600*finalhour) - (finalminute * 60));
+
+            // Right now the price is calculated pr. second using the kW/h price
+            // Converts the price to be correct
             finalprice = (double)countingcost / 3600000;
         }
 
+        // Resets the counting cost
         countingcost = 0;
     }
-    printf("Det er billigst klokken %lf, og det koster %lf\n", finaltime, finalprice);
+    // Print the result
+    printf("It is cheapest to start the cycle at %d:%d:%d, and it costs %.2lf DKK.\n", finalhour, finalminute, finalsecond, finalprice);
 
+    // Free the malloc
     free(tempdata);
     free(buffertemp);
-}
+} 
