@@ -111,6 +111,7 @@ int main()
     // This function prints the finished result in a readable way.
     print_prices(SpotPricesDKK, result, lengthOfSpotPriceData);
 
+    // These functions calculates and prints the optimal time to use the device
     optimaltime(result, lengthOfSpotPriceData, "washingMachine");
     optimaltime(result, lengthOfSpotPriceData, "dishWasher");
 
@@ -698,7 +699,7 @@ void print_prices(double *SpotPriceDKK, total_prices *result, size_t lengthOfArr
 
 void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
 {
-    // Opens the data file, which includes the watt usage every second the device is running
+    // Opens the data file for the given device, which includes the watt usage every second the device is running
     FILE *myFile = NULL;
     if (strcmp(device, "washingMachine") == 0)
     {
