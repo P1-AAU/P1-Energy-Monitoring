@@ -46,7 +46,7 @@ void readPrices_spotPrice(double *SpotPriceDKK, size_t *lengthOfArray);
 void readPrices_tariffs(tarrifs *price_data);
 void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *result, size_t lengthOfArray);
 void print_prices(double *SpotPriceDKK, total_prices *result, size_t lengthOfArray);
-void optimaltime(total_prices *result, size_t lengthOfArray);
+void optimaltime(total_prices *result, size_t lengthOfArray, char *device);
 
 int main()
 {
@@ -111,7 +111,8 @@ int main()
     // This function prints the finished result in a readable way.
     print_prices(SpotPricesDKK, result, lengthOfSpotPriceData);
 
-    optimaltime(result, lengthOfSpotPriceData);
+    optimaltime(result, lengthOfSpotPriceData, "washingMachine");
+    optimaltime(result, lengthOfSpotPriceData, "dishWasher");
 
     // Here we free the allocated memory again.
     free(price_data);
@@ -695,11 +696,20 @@ void print_prices(double *SpotPriceDKK, total_prices *result, size_t lengthOfArr
     }
 }
 
-void optimaltime(total_prices *result, size_t lengthOfArray)
+void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
 {
     // Opens the data file, which includes the watt usage every second the device is running
-    FILE *myFile;
-    myFile = fopen("../washingMachine.txt", "r");
+    FILE *myFile = NULL;
+    if (strcmp(device, "washingMachine") == 0)
+    {
+        myFile = fopen("../washingMachine.txt", "r");
+    }
+    else if (strcmp(device, "dishWasher") == 0)
+    {
+        myFile = fopen("../dishWasher.txt", "r");
+    }
+    
+
 
     // Error check if the data file is not opened
     if (myFile == NULL)
@@ -717,7 +727,7 @@ void optimaltime(total_prices *result, size_t lengthOfArray)
     for (c = getc(myFile); c != EOF; c = getc(myFile))
     {
         // Counts array_length +1 when there is a newline
-        if (c == '\n') 
+        if (c == '\n')
             array_length = array_length + 1;
     }
 
@@ -725,17 +735,15 @@ void optimaltime(total_prices *result, size_t lengthOfArray)
     rewind(myFile);
 
     // Mallocing space for the upcoming dataset
-    double *tempdata;
-    tempdata = malloc(array_length * sizeof(double));
-    char *buffertemp;
-    buffertemp = malloc(array_length * sizeof(char));
+    double *tempdata = malloc(array_length * sizeof(double));
+    char *buffertemp = malloc(array_length * sizeof(char));
     char *buffer;
 
     // Reads the data file and inputs it into an array
     for (i = 0; i < array_length; i++)
     {
         // Takes each line of the data file as a string and stores it in buffertemp
-        fscanf(myFile, "%s\n", &buffertemp[i]); 
+        fscanf(myFile, "%s\n", &buffertemp[i]);
         // Converts the string into a double and stores it in buffer, which puts the value in tempdata
         tempdata[i] = strtod(&buffertemp[i], &buffer);
     }
@@ -756,9 +764,9 @@ void optimaltime(total_prices *result, size_t lengthOfArray)
         finalminute = 0,
         finalsecond = 0;
 
-    double  finalprice = 0.0,
-            countingcost = 0.0,
-            totalcost = 10000000000;
+    double finalprice = 0.0,
+           countingcost = 0.0,
+           totalcost = 10000000000;
 
     // Finds the local time of the user, when starting the program
     time_t rawtime;
@@ -775,7 +783,7 @@ void optimaltime(total_prices *result, size_t lengthOfArray)
     // The "main" function to find the most optimal time of use
 
     // The first for-loop is running through each second in the day/next day
-    // It starts at the current time 
+    // It starts at the current time
     // It runs until we do not have more information on energy prices minus the amount of time it takes for the device cycle to finish
 
     for (; current_seconds < max_seconds - array_length; current_seconds++)
@@ -791,10 +799,10 @@ void optimaltime(total_prices *result, size_t lengthOfArray)
             // If-statement checking if the cycle runs into the next hour
             // If it does, it counts temphour one up, which is used for the cost calculations
             if (((current_seconds + device_clock) % 3600) == 0)
-            { 
+            {
                 temphour++;
             }
-            
+
             // Finding the energy price for the hour the cycle is in
             double energyprice_temphour = result->total_price[temphour];
 
@@ -819,8 +827,8 @@ void optimaltime(total_prices *result, size_t lengthOfArray)
 
             // Converts time from seconds to hours, minutes, seconds
             finalhour = current_seconds / 3600;
-            finalminute = (current_seconds - (3600*finalhour)) / 60;
-            finalsecond = (current_seconds - (3600*finalhour) - (finalminute * 60));
+            finalminute = (current_seconds - (3600 * finalhour)) / 60;
+            finalsecond = (current_seconds - (3600 * finalhour) - (finalminute * 60));
 
             // Right now the price is calculated pr. second using the kW/h price
             // Converts the price to be correct
@@ -831,9 +839,9 @@ void optimaltime(total_prices *result, size_t lengthOfArray)
         countingcost = 0;
     }
     // Print the result
-    printf("It is cheapest to start the cycle at %d:%d:%d, and it costs %.2lf DKK.\n", finalhour, finalminute, finalsecond, finalprice);
+    printf("It is cheapest to start your %s at %d:%d:%d, and it costs %.2lf DKK.\n", device, finalhour, finalminute, finalsecond, finalprice);
 
     // Free the malloc
     free(tempdata);
     free(buffertemp);
-} 
+}
