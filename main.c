@@ -699,7 +699,7 @@ void optimaltime(total_prices *result, size_t lengthOfArray)
 {
     // Opens the data file, which includes the watt usage every second the device is running
     FILE *myFile;
-    myFile = fopen("../data.txt", "r");
+    myFile = fopen("../washingMachine.txt", "r");
 
     // Error check if the data file is not opened
     if (myFile == NULL)
