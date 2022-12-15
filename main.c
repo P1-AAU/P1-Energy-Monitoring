@@ -770,7 +770,8 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
         finalhour = 0,
         finalminute = 0,
         finalsecond = 0,
-        tomorrow = 0;
+        tomorrow = 0,
+        outputseconds = 0;
 
     double finalprice = 0.0,
            countingcost = 0.0,
@@ -837,6 +838,7 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
             finalhour = current_seconds / HOUR_IN_SECONDS;
             finalminute = (current_seconds - (HOUR_IN_SECONDS * finalhour)) / MIN_IN_SECONDS;
             finalsecond = (current_seconds - (HOUR_IN_SECONDS * finalhour) - (finalminute * MIN_IN_SECONDS));
+            outputseconds = current_seconds;
 
             if (finalhour >= HOURS_IN_DAY)
             {
@@ -860,6 +862,20 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
     else
     {
         printf("It is cheapest to start your %s at %d:%d:%d tommorrow, and it costs %.2lf DKK.\n", device, finalhour, finalminute, finalsecond, finalprice);
+    }
+
+    FILE *output;
+    if (strcmp(device, "washing machine") == 0)
+    {
+        output = fopen("../washingMachineTime.txt", "w");
+        fprintf(output, "%d", outputseconds);
+        fclose(output);
+    }
+    else if (strcmp(device, "dishwasher") == 0)
+    {
+        output = fopen("../dishWasherTime.txt", "w");
+        fprintf(output, "%d", outputseconds);
+        fclose(output);
     }
 
     // Free the malloc

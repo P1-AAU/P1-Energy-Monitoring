@@ -8,20 +8,23 @@ import json
 from datetime import timedelta
 import numpy
 
-with open('spotPrices.json','r') as f:
+with open('../spotPrices.json','r') as f:
     data = json.loads(f.read())
 
-file_path = 'dishWasher.txt'
+file_path = '../dishWasher.txt'
 df = pd.read_csv(file_path)
+rawdishdf = pd.read_csv("../dishWasherTime.txt", header=None)
+rawdishdf = rawdishdf.values.ravel()
+print(rawdishdf)
+
 print(df.values.ravel())
 i = 0
 df_ar = df.values.ravel()
 timewatt_ar = []
 for x in df.iterrows():
-    tid = pd.to_datetime(i, unit='s', errors='coerce')
+    tid = pd.to_datetime(i + rawdishdf[0], unit='s', errors='coerce')
     timewatt_ar.append(tid.time())
     i=i+1
-
 
 time_ar = []
 spot_ar = []
@@ -31,14 +34,18 @@ for record in data['records']:
     dt = pd.to_datetime(dt_str)
     time = dt.time()
     time_ar.append(time)
-    spot_ar.append(spot_str)
+    spot_ar.append(spot_str / 1000)
 
 df1 = pd.DataFrame({'Time2': timewatt_ar, 'Wattage': df_ar})
-df1.plot(x='Time2', y='Wattage')
-plt.savefig('dishWasher.png')
-
 df2 = pd.DataFrame({'Time': time_ar, 'SpotPriceDKK': spot_ar})
-df2.plot(kind ='bar', x='Time', y='SpotPriceDKK')
-plt.tight_layout()
+
+fig, ax = plt.subplots(nrows=1, ncols=1)
+
+ax2 = ax.twinx()
+
+df1.plot(x='Time2', y='Wattage', label='DataFrame 1', color='blue', ax=ax, kind='line')
+df2.plot(x='Time', y='SpotPriceDKK', label='DataFrame 2', color='red', ax=ax2, kind='line')
+
+ax2.set_ylim(0, 5)
+
 plt.show()
-plt.savefig('spotPrices.png')
