@@ -22,8 +22,6 @@ for x in df.iterrows():
     timewatt_ar.append(tid.time())
     i=i+1
 
-print(timewatt_ar)
-print(df_ar)
 
 time_ar = []
 spot_ar = []
@@ -34,9 +32,9 @@ for record in data['records']:
     time = dt.time()
     time_ar.append(time)
     spot_ar.append(spot_str)
-df = pd.DataFrame({'Time': timewatt_ar, 'Wattage': df_ar})
-df.plot()
-plt.show()
+
+df1 = pd.DataFrame({'Time2': timewatt_ar, 'Wattage': df_ar})
+df1.plot(x='Time2', y='Wattage')
 plt.savefig('dishWasher.png')
 
 df2 = pd.DataFrame({'Time': time_ar, 'SpotPriceDKK': spot_ar})
