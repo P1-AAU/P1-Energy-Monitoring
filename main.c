@@ -122,6 +122,9 @@ int main()
     // Here we release all resources related to curl globally
     curl_global_cleanup();
 
+    // Here we run the python program to get a graph
+    system("python3 ../MakePlotPython.py");
+
     return 0;
 }
 

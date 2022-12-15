@@ -8,10 +8,10 @@ import json
 import datetime
 from glom import glom
 
-file_path = 'dishWasher.csv'
+file_path = '../dishWasher.txt'
 df = pd.read_csv(file_path)
 
-with open('spotPrices.json','r') as f:
+with open('../spotPrices.json','r') as f:
     data = json.loads(f.read())
 
 df_tid = len(df) / 3600
@@ -28,6 +28,7 @@ for record in data['records']:
     print(spot_str)
     time_ar.append(time)
     spot_ar.append(spot_str)
+
 df2 = pd.DataFrame({'Time': time_ar, 'SpotPriceDKK': spot_ar})
 df2.plot(kind ='bar', x='Time', y='SpotPriceDKK')
-plt.show()
+plt.savefig('../spotPrices.png')
