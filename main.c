@@ -13,6 +13,12 @@
 #define BUFFER_SIZE 5000
 #define METER_SIZE 100
 #define MAX_ARRAY_LENGTH 35
+#define HOUR_IN_SECONDS 3600
+#define WATT_PER_SECONDS_CONVERTER_TO_KWH 3600000
+#define MIN_IN_SECONDS 60
+#define UPPER_BOUND 10000000000
+#define CONVERT_UNIT 1000
+
 // Structs
 typedef struct
 {
@@ -22,8 +28,8 @@ typedef struct
 
 typedef struct
 {
-    double net_tariff[24];
-    double net_tariff_discount[24];
+    double net_tariff[HOURS_IN_DAY];
+    double net_tariff_discount[HOURS_IN_DAY];
     double net_tariff_transmission;
     double system_tariff;
     double balance_tariff;
@@ -533,7 +539,7 @@ void readPrices_spotPrice(double *SpotPriceDKK, size_t *lengthOfArray)
 
         // Here we use json_object_get_double to convert the json formatted spotprice
         // to a double we then divide by 1000 to get the price in DKK
-        SpotPriceDKK[i] = json_object_get_double(spotPrice_temp) / 1000;
+        SpotPriceDKK[i] = json_object_get_double(spotPrice_temp) / CONVERT_UNIT;
     }
 
     json_object_put(parsed_json); // Frees json-object from memory
@@ -768,7 +774,7 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
 
     double finalprice = 0.0,
            countingcost = 0.0,
-           totalcost = 10000000000;
+           totalcost = UPPER_BOUND;
 
     // Finds the local time of the user, when starting the program
     time_t rawtime;
@@ -777,10 +783,10 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
     timeinfo = localtime(&rawtime);
 
     // Converts the current time to seconds, for easier upcoming calculations
-    int current_seconds = timeinfo->tm_hour * 60 * 60;
+    int current_seconds = timeinfo->tm_hour * HOUR_IN_SECONDS;
 
     // Makes a limit for the program, so it runs until we do not have information on energy prices
-    int max_seconds = current_seconds + (lengthOfArray * 60 * 60) - 3600;
+    int max_seconds = current_seconds + (lengthOfArray * HOUR_IN_SECONDS) - HOUR_IN_SECONDS;
 
     // The "main" function to find the most optimal time of use
 
@@ -800,7 +806,7 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
         {
             // If-statement checking if the cycle runs into the next hour
             // If it does, it counts temphour one up, which is used for the cost calculations
-            if (((current_seconds + device_clock) % 3600) == 0)
+            if (((current_seconds + device_clock) % HOUR_IN_SECONDS) == 0)
             {
                 temphour++;
             }
@@ -814,7 +820,7 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
         }
 
         // Counts the hour up if the current_seconds counts to a new hour
-        if (((current_seconds) % 3600) == 0)
+        if (((current_seconds) % HOUR_IN_SECONDS) == 0)
         {
             j++;
         }
@@ -828,19 +834,19 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
             starttime = current_seconds;
 
             // Converts time from seconds to hours, minutes, seconds
-            finalhour = current_seconds / 3600;
-            finalminute = (current_seconds - (3600 * finalhour)) / 60;
-            finalsecond = (current_seconds - (3600 * finalhour) - (finalminute * 60));
+            finalhour = current_seconds / HOUR_IN_SECONDS;
+            finalminute = (current_seconds - (HOUR_IN_SECONDS * finalhour)) / MIN_IN_SECONDS;
+            finalsecond = (current_seconds - (HOUR_IN_SECONDS * finalhour) - (finalminute * MIN_IN_SECONDS));
 
-            if (finalhour >= 24)
+            if (finalhour >= HOURS_IN_DAY)
             {
-                finalhour -= 24;
+                finalhour -= HOURS_IN_DAY;
                 tomorrow = 1;
             }
 
             // Right now the price is calculated pr. second using the kW/h price
             // Converts the price to be correct
-            finalprice = (double)countingcost / 3600000;
+            finalprice = (double)countingcost / WATT_PER_SECONDS_CONVERTER_TO_KWH;
         }
 
         // Resets the counting cost
