@@ -31,4 +31,5 @@ for record in data['records']:
 
 df2 = pd.DataFrame({'Time': time_ar, 'SpotPriceDKK': spot_ar})
 df2.plot(kind ='bar', x='Time', y='SpotPriceDKK')
+plt.tight_layout()
 plt.savefig('../spotPrices.png')
