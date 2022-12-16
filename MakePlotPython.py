@@ -15,9 +15,6 @@ file_path = '../dishWasher.txt'
 df = pd.read_csv(file_path)
 rawdishdf = pd.read_csv("../dishWasherTime.txt", header=None)
 rawdishdf = rawdishdf.values.ravel()
-print(rawdishdf)
-
-print(df.values.ravel())
 i = 0
 df_ar = df.values.ravel()
 timewatt_ar = []

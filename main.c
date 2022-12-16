@@ -56,8 +56,8 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device);
 
 int main()
 {
-    char answer_access;
-    char answer_spot;
+    char answer_access[100];
+    char answer_spot[100];
     double SpotPricesDKK[48];
     size_t lengthOfSpotPriceData = 0;
 
@@ -83,12 +83,15 @@ int main()
         return 0;
     }
 
-    printf("Do you want a new access token? y/n: ");
-    scanf("%c", &answer_access);
+    while (strcmp(answer_access, "y") != 0 && strcmp(answer_access, "n") != 0)
+    {
+        printf("\nDo you want a new access token? y/n: ");
+        scanf("%s", answer_access);
+    }
 
     // If the user says yes to get a new access token, the program will generate
     // a new accesss token and update the metering point id as well.
-    if (answer_access == 'y')
+    if (strcmp(answer_access, "y") == 0)
     {
         // This function generates a new access token
         get_api_token();
@@ -99,12 +102,15 @@ int main()
     // This function grabs the users personal tarrifs
     get_tarrifs();
 
-    printf("Do you want spot prices? y/n: ");
-    scanf(" %c", &answer_spot);
+    while (strcmp(answer_spot, "y") != 0 && strcmp(answer_spot, "n") != 0)
+    {
+        printf("Do you want spot prices? y/n: ");
+        scanf(" %s", answer_spot);
+    }
 
     // If the user says yes to get new spot prices the program will
     // retrieve the spot prices from current hour and as far ahead as possible
-    if (answer_spot == 'y')
+    if (strcmp(answer_spot, "y") == 0)
     {
         get_spot_prices();
     }
