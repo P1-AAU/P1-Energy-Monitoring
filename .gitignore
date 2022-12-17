@@ -54,9 +54,13 @@ build
 cmake-build-debug
 .idea
 
-# Json files
+# files files
 accessToken.json
 meter.json
 spotPrices.json
 tarrifs.json
 .vscode
+spotPrices.png
+dishWasher.png
+dishWasherTime.txt
+washingMachineTime.txt

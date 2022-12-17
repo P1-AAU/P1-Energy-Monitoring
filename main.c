@@ -926,6 +926,20 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
         fclose(output);
     }
 
+    FILE *output;
+    if (strcmp(device, "washing machine") == 0)
+    {
+        output = fopen("../washingMachineTime.txt", "w");
+        fprintf(output, "%d", outputseconds);
+        fclose(output);
+    }
+    else if (strcmp(device, "dishwasher") == 0)
+    {
+        output = fopen("../dishWasherTime.txt", "w");
+        fprintf(output, "%d", outputseconds);
+        fclose(output);
+    }
+
     // Free the malloc
     free(tempdata);
     free(buffertemp);
