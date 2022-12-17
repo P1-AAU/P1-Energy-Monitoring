@@ -48,7 +48,7 @@ typedef struct
 void get_api_token();
 void get_metering_point();
 void get_tarrifs();
-void get_spot_prices();
+void get_spot_prices(char *region);
 void readPrices_spotPrice(double *SpotPriceDKK, size_t *lengthOfArray);
 void readPrices_tariffs(tarrifs *price_data);
 void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *result, size_t lengthOfArray);
@@ -59,6 +59,7 @@ int main()
 {
     char answer_access[100];
     char answer_spot[100];
+    char answer_spot_region[100];
     double SpotPricesDKK[48];
     size_t lengthOfSpotPriceData = 0;
 
@@ -113,7 +114,20 @@ int main()
     // retrieve the spot prices from current hour and as far ahead as possible
     if (strcmp(answer_spot, "y") == 0)
     {
-        get_spot_prices();
+        while (strcmp(answer_spot_region, "w") != 0 && strcmp(answer_spot_region, "e") != 0)
+        {
+            printf("Do you live west or east of Storebelt? w/e: ");
+            scanf(" %s", answer_spot_region);
+        }
+
+        if (strcmp(answer_spot_region, "w"))
+        {
+            get_spot_prices("west");
+        }
+        else if (strcmp(answer_spot_region, "e"))
+        {
+            get_spot_prices("east");
+        }
     }
 
     // These functions reads the spotprices and tarrifs from the files.
@@ -468,7 +482,7 @@ void get_tarrifs()
 
 // This function retrives the spotprices through
 // a GET method using energidataservices api
-void get_spot_prices()
+void get_spot_prices(char *region)
 {
     CURL *curl;
     CURLcode res;
@@ -489,8 +503,17 @@ void get_spot_prices()
         // such as the data and time from when the spotprices should start and
         // which columns from the dataset we want in our case we want the hour
         // and the price.
-        curl_easy_setopt(curl, CURLOPT_URL,
-                         "https://api.energidataservice.dk/dataset/Elspotprices?start=now-P0DT1H&sort=HourDK&columns=HourDK,SpotPriceDKK&filter={%22PriceArea%22:[%22DK1%22]}");
+        if (strcmp(region, "west"))
+        {
+            curl_easy_setopt(curl, CURLOPT_URL,
+                             "https://api.energidataservice.dk/dataset/Elspotprices?start=now-P0DT1H&sort=HourDK&columns=HourDK,SpotPriceDKK&filter={%22PriceArea%22:[%22DK1%22]}");
+        }
+        else if (strcmp(region, "east"))
+        {
+            curl_easy_setopt(curl, CURLOPT_URL,
+                             "https://api.energidataservice.dk/dataset/Elspotprices?start=now-P0DT1H&sort=HourDK&columns=HourDK,SpotPriceDKK&filter={%22PriceArea%22:[%22DK2%22]}");
+        }
+
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, spot_prices_file);
         res = curl_easy_perform(curl);
 
