@@ -125,8 +125,8 @@ int main()
     print_prices(SpotPricesDKK, result, lengthOfSpotPriceData);
 
     // These functions calculates and prints the optimal time to use the device
-    optimaltime(result, lengthOfSpotPriceData, "washing machine");
-    optimaltime(result, lengthOfSpotPriceData, "dishwasher");
+    optimaltime(result, lengthOfSpotPriceData, "Washing Machine");
+    optimaltime(result, lengthOfSpotPriceData, "Dishwasher");
 
     // Here we free the allocated memory again.
     free(price_data);
@@ -717,11 +717,11 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
 {
     // Opens the data file for the given device, which includes the watt usage every second the device is running
     FILE *myFile = NULL;
-    if (strcmp(device, "washing machine") == 0)
+    if (strcmp(device, "Washing Machine") == 0)
     {
         myFile = fopen("../washingMachine.txt", "r");
     }
-    else if (strcmp(device, "dishwasher") == 0)
+    else if (strcmp(device, "Dishwasher") == 0)
     {
         myFile = fopen("../dishWasher.txt", "r");
     }
@@ -891,10 +891,12 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
     // Print the result
     if (tomorrow == 0)
     {
+        printf("\n%s\n", device);
         printf("It is cheapest to start your %s at %d:%d:%d, and it costs %.2lf DKK.\n", device, finalhourmin, finalminutemin, finalsecondmin, finalpricemin);
     }
     else
     {
+        printf("\n%s\n", device);
         printf("It is cheapest to start your %s at %d:%d:%d tommorrow, and it costs %.2lf DKK.\n", device, finalhourmin, finalminutemin, finalsecondmin, finalpricemin);
     }
 
@@ -908,18 +910,18 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
     }
 
     double differencedkk = finalpricemax - finalpricemin;
-    double differencepercent = (finalpricemax - finalpricemin) / finalpricemax;
+    double differencepercent = (finalpricemax - finalpricemin) / finalpricemax * 100;
 
-    printf("The difference from running the device at the cheapest time compared to the most expensive time is %lf, or a %lf percent saving\n", differencedkk, differencepercent);
+    printf("The difference from running the device at the cheapest time compared to the most expensive time is %.2lf DKK, or a %.2lf percent saving\n", differencedkk, differencepercent);
 
     FILE *output;
-    if (strcmp(device, "washing machine") == 0)
+    if (strcmp(device, "Washing Machine") == 0)
     {
         output = fopen("../washingMachineTime.txt", "w");
         fprintf(output, "%d", outputseconds);
         fclose(output);
     }
-    else if (strcmp(device, "dishwasher") == 0)
+    else if (strcmp(device, "Dishwasher") == 0)
     {
         output = fopen("../dishWasherTime.txt", "w");
         fprintf(output, "%d", outputseconds);
