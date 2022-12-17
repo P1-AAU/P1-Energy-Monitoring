@@ -18,6 +18,7 @@
 #define MIN_IN_SECONDS 60
 #define UPPER_BOUND 10000000000
 #define CONVERT_UNIT 1000
+#define LOWER_BOUND 0
 
 // Structs
 typedef struct
@@ -56,8 +57,8 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device);
 
 int main()
 {
-    char answer_access;
-    char answer_spot;
+    char answer_access[100];
+    char answer_spot[100];
     double SpotPricesDKK[48];
     size_t lengthOfSpotPriceData = 0;
 
@@ -83,12 +84,15 @@ int main()
         return 0;
     }
 
-    printf("Do you want a new access token? y/n: ");
-    scanf("%c", &answer_access);
+    while (strcmp(answer_access, "y") != 0 && strcmp(answer_access, "n") != 0)
+    {
+        printf("\nDo you want a new access token? y/n: ");
+        scanf("%s", answer_access);
+    }
 
     // If the user says yes to get a new access token, the program will generate
     // a new accesss token and update the metering point id as well.
-    if (answer_access == 'y')
+    if (strcmp(answer_access, "y") == 0)
     {
         // This function generates a new access token
         get_api_token();
@@ -99,12 +103,15 @@ int main()
     // This function grabs the users personal tarrifs
     get_tarrifs();
 
-    printf("Do you want spot prices? y/n: ");
-    scanf(" %c", &answer_spot);
+    while (strcmp(answer_spot, "y") != 0 && strcmp(answer_spot, "n") != 0)
+    {
+        printf("Do you want spot prices? y/n: ");
+        scanf(" %s", answer_spot);
+    }
 
     // If the user says yes to get new spot prices the program will
     // retrieve the spot prices from current hour and as far ahead as possible
-    if (answer_spot == 'y')
+    if (strcmp(answer_spot, "y") == 0)
     {
         get_spot_prices();
     }
@@ -763,18 +770,25 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
         temphour = 0,
         energyprice_temphour = 0,
         device_clock = 0,
-        starttime = 0,
+        starttimemin = 0,
+        starttimemax = 0,
         runningtemphour = 0,
         array_hour = 0,
         j = 0,
-        finalhour = 0,
-        finalminute = 0,
-        finalsecond = 0,
-        tomorrow = 0;
+        finalhourmin = 0,
+        finalminutemin = 0,
+        finalsecondmin = 0,
+        finalhourmax = 0,
+        finalminutemax = 0,
+        finalsecondmax = 0,
+        tomorrow = 0,
+        outputseconds = 0;
 
-    double finalprice = 0.0,
+    double finalpricemin = 0.0,
+           finalpricemax = 0.0,
            countingcost = 0.0,
-           totalcost = UPPER_BOUND;
+           totalcostmin = UPPER_BOUND,
+           totalcostmax = LOWER_BOUND;
 
     // Finds the local time of the user, when starting the program
     time_t rawtime;
@@ -825,41 +839,91 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
             j++;
         }
 
-        // Checks if the counting cost is "cheaper" than the totalcost
+        // Checks if the counting cost is "cheaper" than the totalcostmin
         // Totalcost is the running cost for the cheapest cycle
-        if (countingcost < totalcost)
+        if (countingcost < totalcostmin)
         {
             // Saves the cost and the time to start the cycle
-            totalcost = countingcost;
-            starttime = current_seconds;
+            totalcostmin = countingcost;
+            starttimemin = current_seconds;
 
             // Converts time from seconds to hours, minutes, seconds
-            finalhour = current_seconds / HOUR_IN_SECONDS;
-            finalminute = (current_seconds - (HOUR_IN_SECONDS * finalhour)) / MIN_IN_SECONDS;
-            finalsecond = (current_seconds - (HOUR_IN_SECONDS * finalhour) - (finalminute * MIN_IN_SECONDS));
+            finalhourmin = current_seconds / HOUR_IN_SECONDS;
+            finalminutemin = (current_seconds - (HOUR_IN_SECONDS * finalhourmin)) / MIN_IN_SECONDS;
+            finalsecondmin = (current_seconds - (HOUR_IN_SECONDS * finalhourmin) - (finalminutemin * MIN_IN_SECONDS));
+            outputseconds = current_seconds;
 
-            if (finalhour >= HOURS_IN_DAY)
+            if (finalhourmin >= HOURS_IN_DAY)
             {
-                finalhour -= HOURS_IN_DAY;
+                finalhourmin -= HOURS_IN_DAY;
                 tomorrow = 1;
             }
 
             // Right now the price is calculated pr. second using the kW/h price
             // Converts the price to be correct
-            finalprice = (double)countingcost / WATT_PER_SECONDS_CONVERTER_TO_KWH;
+            finalpricemin = (double)countingcost / WATT_PER_SECONDS_CONVERTER_TO_KWH;
         }
 
+        if (countingcost > totalcostmax)
+        {
+            // Saves the cost and the time to start the cycle
+            totalcostmax = countingcost;
+            starttimemax = current_seconds;
+
+            // Converts time from seconds to hours, minutes, seconds
+            finalhourmax = current_seconds / HOUR_IN_SECONDS;
+            finalminutemax = (current_seconds - (HOUR_IN_SECONDS * finalhourmax)) / MIN_IN_SECONDS;
+            finalsecondmax = (current_seconds - (HOUR_IN_SECONDS * finalhourmax) - (finalminutemax * MIN_IN_SECONDS));
+
+            if (finalhourmax >= HOURS_IN_DAY)
+            {
+                finalhourmax -= HOURS_IN_DAY;
+                tomorrow = 1;
+            }
+
+            // Right now the price is calculated pr. second using the kW/h price
+            // Converts the price to be correct
+            finalpricemax = (double)countingcost / WATT_PER_SECONDS_CONVERTER_TO_KWH;
+        }
         // Resets the counting cost
         countingcost = 0;
     }
     // Print the result
     if (tomorrow == 0)
     {
-        printf("It is cheapest to start your %s at %d:%d:%d, and it costs %.2lf DKK.\n", device, finalhour, finalminute, finalsecond, finalprice);
+        printf("It is cheapest to start your %s at %d:%d:%d, and it costs %.2lf DKK.\n", device, finalhourmin, finalminutemin, finalsecondmin, finalpricemin);
     }
     else
     {
-        printf("It is cheapest to start your %s at %d:%d:%d tommorrow, and it costs %.2lf DKK.\n", device, finalhour, finalminute, finalsecond, finalprice);
+        printf("It is cheapest to start your %s at %d:%d:%d tommorrow, and it costs %.2lf DKK.\n", device, finalhourmin, finalminutemin, finalsecondmin, finalpricemin);
+    }
+
+    if (tomorrow == 0)
+    {
+        printf("It is most expensive to start your %s at %d:%d:%d, and it costs %.2lf DKK.\n", device, finalhourmax, finalminutemax, finalsecondmax, finalpricemax);
+    }
+    else
+    {
+        printf("It is most expensive to start your %s at %d:%d:%d tommorrow, and it costs %.2lf DKK.\n", device, finalhourmax, finalminutemax, finalsecondmax, finalpricemax);
+    }
+
+    double differencedkk = finalpricemax - finalpricemin;
+    double differencepercent = (finalpricemax - finalpricemin) / finalpricemax;
+
+    printf("The difference from running the device at the cheapest time compared to the most expensive time is %lf, or a %lf percent saving\n", differencedkk, differencepercent);
+
+    FILE *output;
+    if (strcmp(device, "washing machine") == 0)
+    {
+        output = fopen("../washingMachineTime.txt", "w");
+        fprintf(output, "%d", outputseconds);
+        fclose(output);
+    }
+    else if (strcmp(device, "dishwasher") == 0)
+    {
+        output = fopen("../dishWasherTime.txt", "w");
+        fprintf(output, "%d", outputseconds);
+        fclose(output);
     }
 
     // Free the malloc
