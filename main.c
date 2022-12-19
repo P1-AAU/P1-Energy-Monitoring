@@ -42,6 +42,7 @@ typedef struct
     double total_price[MAX_ARRAY_LENGTH];
     double total_tax[MAX_ARRAY_LENGTH];
     double VAT[MAX_ARRAY_LENGTH];
+    double average_price;
 } total_prices;
 
 // prototypes
@@ -684,6 +685,8 @@ void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *r
     // by writing timeinfo->tm_hour.
     int current_hour = timeinfo->tm_hour;
 
+    double average_price_buff = 0.0;
+
     // Here we calculate the total tax per hour
     for (int i = 0; i < HOURS_IN_DAY; i++)
     {
@@ -710,6 +713,14 @@ void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *r
             current_hour++;
         }
     }
+
+    // Here we calculate the average price
+    for (int i = 0; i < lengthOfArray; i++)
+    {
+        average_price_buff += result->total_price[i];
+    }
+
+    result->average_price = average_price_buff / lengthOfArray;
 }
 
 // This function is used present the prices in a nicely way
@@ -734,6 +745,8 @@ void print_prices(double *SpotPriceDKK, total_prices *result, size_t lengthOfArr
             current_hour++;
         }
     }
+
+    printf("\nThe average price is: %lf DKK\n", result->average_price);
 }
 
 void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
