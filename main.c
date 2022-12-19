@@ -924,6 +924,17 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
         // Resets the counting cost
         countingcost = 0;
     }
+
+    for (device_clock = 0; device_clock < array_length; device_clock++)
+    {
+
+        // Counting the cost for each second the device cycle is running
+        // Basically: Energy price for the hour * the watt usage at that time + the counting cost
+        countingcost = result->average_price * tempdata[device_clock] + countingcost;
+    }
+
+    double averagePrice = (double)countingcost / WATT_PER_SECONDS_CONVERTER_TO_KWH;
+
     // Print the result
     if (tomorrow == 0)
     {
@@ -948,7 +959,11 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
     double differencedkk = finalpricemax - finalpricemin;
     double differencepercent = (finalpricemax - finalpricemin) / finalpricemax * 100;
 
-    printf("The difference from running the device at the cheapest time compared to the most expensive time is %.2lf DKK, or a %.2lf percent saving\n", differencedkk, differencepercent);
+    double differencedkkAverage = averagePrice - finalpricemin;
+    double differencepercentAverage = (averagePrice - finalpricemin) / averagePrice * 100;
+
+    printf("Cost difference from cheapest to most expensive time is %.2lf DKK, or a %.2lf%% saving\n", differencedkk, differencepercent);
+    printf("Cost difference from cheapest to average time is %.2lf DKK, or a %.2lf%% saving\n", differencedkkAverage, differencepercentAverage);
 
     FILE *output;
     if (strcmp(device, "Washing Machine") == 0)
