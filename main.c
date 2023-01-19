@@ -10,7 +10,7 @@
 #define MAX_LENGTH 30
 #define HOURS_IN_DAY 24
 #define VAT_CONST 1.25
-#define BUFFER_SIZE 5000
+#define BUFFER_SIZE 10000
 #define METER_SIZE 100
 #define MAX_ARRAY_LENGTH 35
 #define HOUR_IN_SECONDS 3600
@@ -33,7 +33,6 @@ typedef struct
     double net_tariff_discount[HOURS_IN_DAY];
     double net_tariff_transmission;
     double system_tariff;
-    double balance_tariff;
     double electricity_tax;
 } tarrifs;
 
@@ -600,9 +599,6 @@ void readPrices_tariffs(tarrifs *price_data)
     json_object *system_tariff_parent;
     json_object *system_tariff_array;
     json_object *system_tariff_price;
-    json_object *balance_tariff_parent;
-    json_object *balance_tariff_array;
-    json_object *balance_tariff_price;
     json_object *electricity_tax_parent;
     json_object *electricity_tax_array;
     json_object *electricity_tax_price;
@@ -625,14 +621,12 @@ void readPrices_tariffs(tarrifs *price_data)
     tariff_discount_parent = json_object_array_get_idx(tariffs_array, 1);
     net_tariff_transmission_parent = json_object_array_get_idx(tariffs_array, 2);
     system_tariff_parent = json_object_array_get_idx(tariffs_array, 3);
-    balance_tariff_parent = json_object_array_get_idx(tariffs_array, 4);
-    electricity_tax_parent = json_object_array_get_idx(tariffs_array, 5);
+    electricity_tax_parent = json_object_array_get_idx(tariffs_array, 4);
 
     tariff_prices = json_object_object_get(tariff_price_parent, "prices");
     tariff_discount = json_object_object_get(tariff_discount_parent, "prices");
     net_tariff_transmission_array = json_object_object_get(net_tariff_transmission_parent, "prices");
     system_tariff_array = json_object_object_get(system_tariff_parent, "prices");
-    balance_tariff_array = json_object_object_get(balance_tariff_parent, "prices");
     electricity_tax_array = json_object_object_get(electricity_tax_parent, "prices");
 
     n_prices = json_object_array_length(tariff_prices);
@@ -657,12 +651,10 @@ void readPrices_tariffs(tarrifs *price_data)
 
     net_tariff_transmission_price = json_object_object_get(json_object_array_get_idx(net_tariff_transmission_array, 0), "price");
     system_tariff_price = json_object_object_get(json_object_array_get_idx(system_tariff_array, 0), "price");
-    balance_tariff_price = json_object_object_get(json_object_array_get_idx(balance_tariff_array, 0), "price");
     electricity_tax_price = json_object_object_get(json_object_array_get_idx(electricity_tax_array, 0), "price");
 
     price_data->net_tariff_transmission = json_object_get_double(net_tariff_transmission_price);
     price_data->system_tariff = json_object_get_double(system_tariff_price);
-    price_data->balance_tariff = json_object_get_double(balance_tariff_price);
     price_data->electricity_tax = json_object_get_double(electricity_tax_price);
 
     json_object_put(parsed_json);
@@ -694,7 +686,6 @@ void total_price_calc(double *SpotPriceDKK, tarrifs *price_data, total_prices *r
         result->total_tax[i] += price_data->net_tariff_discount[i]; // The value is already negative
         result->total_tax[i] += price_data->net_tariff_transmission;
         result->total_tax[i] += price_data->system_tariff;
-        result->total_tax[i] += price_data->balance_tariff;
         result->total_tax[i] += price_data->electricity_tax;
     }
 
@@ -818,6 +809,7 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
         finalminutemax = 0,
         finalsecondmax = 0,
         tomorrow = 0,
+        tomorrowMax = 0,
         outputseconds = 0;
 
     double finalpricemin = 0.0,
@@ -914,7 +906,7 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
             if (finalhourmax >= HOURS_IN_DAY)
             {
                 finalhourmax -= HOURS_IN_DAY;
-                tomorrow = 1;
+                tomorrowMax = 1;
             }
 
             // Right now the price is calculated pr. second using the kW/h price
@@ -947,7 +939,7 @@ void optimaltime(total_prices *result, size_t lengthOfArray, char *device)
         printf("It is cheapest to start your %s at %d:%d:%d tommorrow, and it costs %.2lf DKK.\n", device, finalhourmin, finalminutemin, finalsecondmin, finalpricemin);
     }
 
-    if (tomorrow == 0)
+    if (tomorrowMax == 0)
     {
         printf("It is most expensive to start your %s at %d:%d:%d, and it costs %.2lf DKK.\n", device, finalhourmax, finalminutemax, finalsecondmax, finalpricemax);
     }
